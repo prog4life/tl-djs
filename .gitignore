@@ -1,0 +1,28 @@
+# dependencies:
+node_modules/
+
+# production:
+build/
+dist/
+
+# public/
+public/dist/
+public/assets/
+
+public/bundle.js
+public/bundle.js.map
+public/*.css
+public/*.css.map
+
+src/assets/
+
+# config/
+**/.env
+
+# .eslintrc.json
+# .eslintignore
+
+# misc
+.DS_Store
+npm-debug.log
+**/.idea/
