@@ -5,7 +5,7 @@ node_modules/
 build/
 dist/
 
-# public/
+public/
 public/dist/
 public/assets/
 
@@ -14,7 +14,7 @@ public/bundle.js.map
 public/*.css
 public/*.css.map
 
-src/assets/
+# src/assets/
 
 # config/
 **/.env

@@ -62,9 +62,15 @@ module.exports = (env = process.env.NODE_ENV) => {
       new HTMLWebpackPlugin({
         title: 'TL App for DJS testcase',
         favicon: path.resolve(__dirname, 'src/assets/favicon-32x32.png'),
-        // template: 'index.html',
-        chunks: ['manifest', 'polyfills', 'vendor', 'bundle'],
-        excludeChunks: ['common']
+        inject: false,
+        template: path.resolve(__dirname, 'src/assets/template-index.html'),
+        chunksSortMode(a, b) {
+          const chunks = ['manifest', 'polyfills', 'vendor', 'bundle'];
+          return chunks.indexOf(a.names[0]) - chunks.indexOf(b.names[0]);
+        },
+        appMountId: 'app',
+        mobile: true
+        // excludeChunks: ['common']
         // filename: 'assets/custom.html'
         // hash: true // usefull for cache busting
       }),
