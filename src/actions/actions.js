@@ -3,6 +3,7 @@ import {
   LOAD_STUDIOS_SUCCESS,
   LOAD_STUDIOS_FAIL,
   ADD_STUDIOS_FILTER_TAG,
+  REMOVE_STUDIOS_FILTER_TAG,
   SET_STUDIOS_FILTER_TEXT
 } from 'constants/actionTypes';
 import transformArrayToObj from 'utils/handleResponse';
@@ -23,6 +24,11 @@ export const loadStudiosFail = error => ({
 
 export const addStudiosFilterTag = tagName => ({
   type: ADD_STUDIOS_FILTER_TAG,
+  tagName
+});
+
+export const removeStudiosFilterTag = tagName => ({
+  type: REMOVE_STUDIOS_FILTER_TAG,
   tagName
 });
 

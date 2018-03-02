@@ -1,62 +1,83 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _throttle from 'lodash.throttle';
 import { Form, Input, Tag } from 'antd';
 
 const FormItem = Form.Item;
 const { Search } = Input;
 
+// const setStudiosFilterTextThrottled = _throttle(setStudiosFilterText, 1000, {
+//   leading: true,
+//   trailing: true
+// });
 
-// changeSearchTextDebounced = lo_debounce(this.handleSearchTextChange(e), 500);
+// TODO: changeSearchTextDebounced = lo_debounce(this.handleSearchChange(e), 500);
 
 class StudiosFilterForm extends Component {
   static propTypes = {
     addStudiosFilterTag: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-    loadStudios: PropTypes.func.isRequired,
-    searchText: PropTypes.string.isRequired,
-    studios: PropTypes.instanceOf(Object).isRequired,
+    form: PropTypes.instanceOf(Object).isRequired,
+    removeStudiosFilterTag: PropTypes.func.isRequired,
+    setStudiosFilterText: PropTypes.func.isRequired,
     tags: PropTypes.instanceOf(Array).isRequired
   }
-  handleStudioSearch = (value) => {
-    if (typeof value !== 'string' || value.length < 1) {
-      // TODO: show tooltip or
+  setStudiosFilterTextThrottled = _throttle(
+    this.props.setStudiosFilterText,
+    1000,
+    // NOTE: trailing causes excess setting of field value on search event
+    { leading: false, trailing: true }
+  )
+  handleAfterClose = tagName => () => {
+    const { removeStudiosFilterTag } = this.props;
+    removeStudiosFilterTag(tagName);
+  }
+  handleSearch = (value) => {
+    // TODO: cancel or flush throttled ?
+    this.setStudiosFilterTextThrottled.cancel();
+    const val = value.trim();
+    if (!val || val.length < 1) {
+      // TODO: use provided by lib validation
       return;
     }
     const { addStudiosFilterTag, setStudiosFilterText, form } = this.props;
-    console.log(value);
-    addStudiosFilterTag(value);
-    form.resetFields('search');
+    // console.log('search value: ', val);
+    addStudiosFilterTag(val);
     setStudiosFilterText('');
+    form.setFieldsValue({ search: '' }); // OR: form.resetFields('search');
   }
-  handleSearchTextChange = (e) => {
-    console.log(e.target.value);
-    const { setStudiosFilterText } = this.props;
-    setStudiosFilterText(e.target.value);
+  handleSearchChange = (e) => {
+    // e.persist();
+    // const { setStudiosFilterText } = this.props;
+    // NOTE: form.getFieldValue('search') returns prev value here
+    console.log('on search change e.target.value: ', e.target.value);
+    this.setStudiosFilterTextThrottled(e.target.value);
   }
   handleSubmit = (e) => {
     e.preventDefault();
   }
   render() {
-    const {
-      form: { getFieldDecorator, validateFields, resetFields },
-      tags
-    } = this.props;
+    const { form: { getFieldDecorator }, tags } = this.props;
 
     return (
       <Form onSubmit={this.handleSubmit}>
         <FormItem>
           {getFieldDecorator('search')(<Search
-            onChange={this.handleSearchTextChange}
-            onSearch={this.handleStudioSearch}
+            onChange={this.handleSearchChange}
+            onSearch={this.handleSearch}
             placeholder="Умный поиск"
-            // value={searchText}
           />)}
         </FormItem>
         <div>
           {tags.map((tag) => {
             const isLongTag = tag.length > 20;
             const tagElem = (
-              <Tag key={tag} afterClose={() => tag} closable>
+              <Tag
+                key={tag}
+                name={tag}
+                closable
+                // onClose={this.handleTagClose}
+                afterClose={this.handleAfterClose(tag)}
+              >
                 {isLongTag ? `${tag.slice(0, 20)}...` : tag}
               </Tag>
             );
@@ -74,21 +95,17 @@ class StudiosFilterForm extends Component {
   }
 }
 
-export default Form.create(
-// {
-//   onFieldsChange(props, changedFields) {
-//     props.onChange(changedFields);
-//   },
-//   mapPropsToFields(props) {
-//     return {
-//       username: Form.createFormField({
-//         ...props.username,
-//         value: props.username.value,
-//       }),
-//     };
-//   },
-//   onValuesChange(_, values) {
-//     console.log(values);
-//   }
-// }
-)(StudiosFilterForm);
+export default Form.create({
+  // onFieldsChange({ setStudiosFilterText }, changedFields) {
+  //   console.log('changedFields.search.value: ', changedFields.search.value);
+  //   setStudiosFilterText(changedFields.search.value);
+  // },
+  mapPropsToFields({ searchText }) {
+    console.log('mapped searchText: ', searchText);
+    return {
+      search: Form.createFormField({
+        value: searchText
+      })
+    };
+  }
+})(StudiosFilterForm);
