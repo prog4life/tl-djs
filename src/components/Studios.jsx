@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // import { Field, reduxForm } from 'redux-form'
-import { Layout } from 'antd';
+import { Layout, List, Row, Col } from 'antd';
+import StudioCard from 'components/StudioCard';
 import StudiosFilterContainer from 'containers/StudiosFilterContainer';
 
 const { Header, Sider, Content } = Layout;
@@ -33,40 +34,44 @@ class Studios extends Component {
         </Header>
         <Layout>
           <Content>
-            <div className="studios container">
-              <h3>
-                {'Studios Page'}
-              </h3>
-              <button onClick={this.handleLoadClick} type="button" >
-                {'LOAD'}
-              </button>
-              <h4>
-                {`Loading: ${isLoading}`}
-              </h4>
-              {studios && studios.map(({ id, name, price, view: [imgSrc] }) => (
-                <div key={id} className="studio-card" >
-                  <header>
-                    <span>
-                      {name}
-                    </span>
-                    {': '}
-                    <span>
-                      {price}
-                    </span>
-                  </header>
-                  <img
-                    alt={`Студия ${name}`}
-                    height="200px"
-                    src={imgSrc}
-                    // width="200px"
+            <Row>
+              <Col span={18}>
+                <div className="studios">
+                  <button onClick={this.handleLoadClick} type="button" >
+                    {'LOAD'}
+                  </button>
+                  <h4>
+                    {`Loading: ${isLoading}`}
+                  </h4>
+                  <List
+                    dataSource={studios}
+                    grid={{ gutter: 20, xs: 1, sm: 2, md: 3, lg: 3 }}
+                    loading={isLoading}
+                    renderItem={item => (
+                      <List.Item>
+                        {/* <StudioCard key={item.id} {...item} /> */}
+                        <StudioCard {...item} />
+                      </List.Item>
+                    )}
                   />
+                  {/* <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    {studios && studios.map(studio => (
+                      <Col key={studio.id} span={8}>
+                        <StudioCard {...studio} />
+                      </Col>
+                    ))}
+                  </Row> */}
                 </div>
-              ))}
-            </div>
+              </Col>
+              <Col span={6}>
+                <Layout style={{ minHeight: '100%', padding: 32 }}>
+                  <StudiosFilterContainer />
+                </Layout>
+              </Col>
+            </Row>
           </Content>
-          <Sider>
-            <StudiosFilterContainer />
-          </Sider>
+          {/* <Sider>
+          </Sider> */}
         </Layout>
       </Layout>
     );
@@ -74,3 +79,21 @@ class Studios extends Component {
 }
 
 export default Studios;
+
+{/* <div key={id} className="studio-card" >
+  <header>
+    <span>
+      {name}
+    </span>
+    {': '}
+    <span>
+      {price}
+    </span>
+  </header>
+  <img
+    alt={`Студия ${name}`}
+    height="200px"
+    src={imgSrc}
+    // width="200px"
+  />
+</div> */}
