@@ -79,21 +79,3 @@ class Studios extends Component {
 }
 
 export default Studios;
-
-{/* <div key={id} className="studio-card" >
-  <header>
-    <span>
-      {name}
-    </span>
-    {': '}
-    <span>
-      {price}
-    </span>
-  </header>
-  <img
-    alt={`Студия ${name}`}
-    height="200px"
-    src={imgSrc}
-    // width="200px"
-  />
-</div> */}

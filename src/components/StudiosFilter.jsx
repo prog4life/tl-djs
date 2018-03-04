@@ -102,7 +102,7 @@ class StudiosFilterForm extends Component {
             <header>
               {'Стоимость'}
             </header>
-            <summary>
+            <div>
               <span>
                 {'1000'}
               </span>
@@ -112,7 +112,7 @@ class StudiosFilterForm extends Component {
               <span>
                 {'12000'}
               </span>
-            </summary>
+            </div>
           </div>
           <Slider
             defaultValue={[1000, 12000]}

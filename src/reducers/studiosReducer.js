@@ -13,8 +13,8 @@ const studios = (state = defaultState, action) => {
   switch (action.type) {
     case LOAD_STUDIOS_REQUEST:
       return {
-        ...state,
-        isLoading: true
+        isLoading: true,
+        studiosByIds: {}
       };
     case LOAD_STUDIOS_SUCCESS:
       return {

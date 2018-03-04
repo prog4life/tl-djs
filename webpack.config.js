@@ -65,7 +65,7 @@ module.exports = (env = process.env.NODE_ENV) => {
         inject: false,
         template: path.resolve(__dirname, 'src/assets/template-index.html'),
         chunksSortMode(a, b) {
-          const chunks = ['manifest', 'polyfills', 'vendor', 'bundle'];
+          const chunks = ['manifest', 'polyfills', 'vendors', 'bundle'];
           return chunks.indexOf(a.names[0]) - chunks.indexOf(b.names[0]);
         },
         appMountId: 'app',
@@ -81,8 +81,12 @@ module.exports = (env = process.env.NODE_ENV) => {
       // useful during development for more readable output, if compare with
       // new webpack.NamedModulesPlugin(), // HashedModuleIdsPlugin
       // new webpack.HashedModuleIdsPlugin(), // better for production
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'common',
+      //   minChunks: 2
+      // }),
       new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
+        name: 'vendors',
         chunks: ['bundle'],
         minChunks(module) { // 1st arg: 'module', 2nd: count
           // This prevents stylesheet resources with the .css or .scss extension
@@ -93,13 +97,9 @@ module.exports = (env = process.env.NODE_ENV) => {
           return module.context && module.context.includes('node_modules');
         }
       }),
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'common',
-      //   minChunks: 2
-      // }),
       new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest',
-        minChunks: Infinity
+        name: 'manifest'
+        // minChunks: Infinity
       }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
@@ -151,8 +151,7 @@ module.exports = (env = process.env.NODE_ENV) => {
                 // useBuiltIns: false,
                 debug: true,
                 targets: {
-                  // browsers: ['defaults', 'firefox 52', 'not ie <= 11'],
-                  browsers: ['defaults']
+                  browsers: ['last 2 versions']
                 },
                 exclude: [
                   'transform-regenerator',
@@ -177,7 +176,7 @@ module.exports = (env = process.env.NODE_ENV) => {
                 options: {
                   importLoaders: 3,
                   // url: false, // enable/disable url() resolution
-                  // minimize: true, // OR { /* cssnano config */ } OR w/postcss
+                  // minimize: true, // OR cssnano config object
                   sourceMap: true
                 }
               },
@@ -188,7 +187,7 @@ module.exports = (env = process.env.NODE_ENV) => {
                   syntax: scssSyntax,
                   plugins: [
                     autoprefixer
-                    // cssnano
+                    // cssnano // with def config it brokes antd spinner
                   ],
                   sourceMap: true
                 }

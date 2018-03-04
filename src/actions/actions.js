@@ -14,7 +14,7 @@ export const loadStudiosRequest = () => ({
 
 export const loadStudiosSuccess = studios => ({
   type: LOAD_STUDIOS_SUCCESS,
-  studios: transformArrayToObj(studios)
+  studios
 });
 
 export const loadStudiosFail = error => ({
@@ -47,7 +47,10 @@ export const loadStudios = () => (dispatch) => {
       res.json()
     )
     .then(response =>
-      dispatch(loadStudiosSuccess(response))
+      transformArrayToObj(response)
+    )
+    .then(studios =>
+      dispatch(loadStudiosSuccess(studios))
     )
     .catch(error =>
       // dispatch(loadStudiosFail(error))

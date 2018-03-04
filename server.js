@@ -41,7 +41,7 @@ app.get('/studios', (req, res, next) => {
   // res.json(studios);
   setTimeout(() => {
     res.json(studios);
-  }, 1000);
+  }, 3000);
   // res.header('Content-Type', 'application/json');
   // res.sendFile(path.join(__dirname, 'studios.json'));
 });
