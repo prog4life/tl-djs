@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _throttle from 'lodash.throttle';
 import { Form, Input, Tag, Slider } from 'antd';
+// import PriceSlider from 'components/PriceSlider';
 
 const FormItem = Form.Item;
 const { Search } = Input;
@@ -63,7 +64,7 @@ class StudiosFilterForm extends Component {
           {getFieldDecorator('search')(<Search
             onChange={this.handleSearchChange}
             onSearch={this.handleSearch}
-            placeholder="Умный поиск"
+            placeholder="Умный поиск!"
           />)}
         </FormItem>
         <div>
@@ -85,6 +86,7 @@ class StudiosFilterForm extends Component {
             return tagElem;
           })}
         </div>
+        {/* <PriceSlider /> */}
         <div style={{
             backgroundColor: '#fff',
             // boxShadow: '0 2px 8px rgba(0, 0, 0, 0.09)',

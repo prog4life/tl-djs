@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const VisualizerPlugin = require('webpack-visualizer-plugin');
 const DuplPkgCheckrPlugin = require('duplicate-package-checker-webpack-plugin');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 // const CompressionPlugin = require('compression-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const scssSyntax = require('postcss-scss');
@@ -32,17 +33,14 @@ module.exports = (env = process.env.NODE_ENV) => {
       ]
     },
     output: {
-      filename: '[name].js',
-      // filename: '[name].[chunkhash].js',
-      // chunkFilename: '[name].bundle.js',
+      filename: isProduction ? '[name].[chunkhash].js' : '[name].[id].js',
+      chunkFilename: isProduction ? '[name].[chunkhash].js' : '[id].[name].js',
       path: path.resolve(__dirname, 'public'),
       publicPath: '/'
     },
     plugins: [
       new ExtractTextPlugin({
-        filename: getPath => (
-          getPath('[name].css').replace('bundle', 'styles') // OR: 'css/styles'
-        ),
+        filename: isProduction ? 'styles.[contenthash].css' : 'styles.[id].css',
         allChunks: true,
         disable: env === 'development' // OR: !isProduction
       }),
@@ -65,8 +63,8 @@ module.exports = (env = process.env.NODE_ENV) => {
         inject: false,
         template: path.resolve(__dirname, 'src/assets/template-index.html'),
         chunksSortMode(a, b) {
-          const chunks = ['manifest', 'polyfills', 'vendors', 'bundle'];
-          return chunks.indexOf(a.names[0]) - chunks.indexOf(b.names[0]);
+          const order = ['manifest', 'polyfills', 'vendors', 'bundle'];
+          return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
         },
         appMountId: 'app',
         mobile: true
@@ -81,10 +79,6 @@ module.exports = (env = process.env.NODE_ENV) => {
       // useful during development for more readable output, if compare with
       // new webpack.NamedModulesPlugin(), // HashedModuleIdsPlugin
       // new webpack.HashedModuleIdsPlugin(), // better for production
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'common',
-      //   minChunks: 2
-      // }),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendors',
         chunks: ['bundle'],
@@ -97,13 +91,22 @@ module.exports = (env = process.env.NODE_ENV) => {
           return module.context && module.context.includes('node_modules');
         }
       }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest'
-        // minChunks: Infinity
-      }),
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'commons',
+      //   minChunks: 2
+      // }),
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'manifest'
+      //   // minChunks: Infinity
+      // }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false
+      }),
+      new ChunkManifestPlugin({
+        filename: 'manifest.json'
+        // manifestVariable: 'webpackManifest',
+        // inlineManifest: false
       }),
       new VisualizerPlugin(),
       new DuplPkgCheckrPlugin(),
@@ -120,7 +123,7 @@ module.exports = (env = process.env.NODE_ENV) => {
         path.resolve(__dirname, 'src'),
         'node_modules'
       ],
-      extensions: ['.js', '.json', '.jsx', '*']
+      extensions: ['.js', '.json', '.jsx', '.less', '*']
     },
     module: {
       rules: [
@@ -140,7 +143,7 @@ module.exports = (env = process.env.NODE_ENV) => {
               ['import', {
                 libraryName: 'antd',
                 libraryDirectory: 'es',
-                style: 'css' // true OR 'css'(without optimization)
+                style: true // true OR 'css'(without optimization)
               }]
             ],
             presets: [
@@ -199,6 +202,30 @@ module.exports = (env = process.env.NODE_ENV) => {
           })
         },
         {
+          test: /\.less$/,
+          use: ExtractTextPlugin.extract({
+            use: [
+              {
+                loader: 'css-loader',
+                options: { importLoaders: 2, sourceMap: true }
+              },
+              // {
+              //   loader: 'postcss-loader',
+              //   options: {
+              //     ident: 'postcss',
+              //     plugins: [autoprefixer],
+              //     sourceMap: true
+              //   }
+              // },
+              {
+                loader: 'less-loader',
+                options: { javascriptEnabled: true, sourceMap: true }
+              }
+            ],
+            fallback: 'style-loader'
+          })
+        },
+        {
           test: /\.(png|jpe?g|gif|svg)$/,
           include: path.resolve(__dirname, 'src'),
           use: [
@@ -239,7 +266,6 @@ module.exports = (env = process.env.NODE_ENV) => {
       historyApiFallback: true
       // port: 9000,
     },
-    // devtool: isProduction ? 'source-map' : 'cheap-module-eval-source-map'
-    devtool: 'source-map'
+    devtool: isProduction ? 'source-map' : 'eval-source-map'
   };
 };
