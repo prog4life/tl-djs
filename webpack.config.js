@@ -7,7 +7,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const VisualizerPlugin = require('webpack-visualizer-plugin');
 const DuplPkgCheckrPlugin = require('duplicate-package-checker-webpack-plugin');
-const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 // const CompressionPlugin = require('compression-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const scssSyntax = require('postcss-scss');
@@ -29,20 +28,20 @@ module.exports = (env = process.env.NODE_ENV) => {
         // 'babel-polyfill',
         // 'normalize.css/normalize.css',
         // './src/styles/index.scss',
-        './src/index.jsx'
-      ]
+        './src/index.jsx',
+      ],
     },
     output: {
       filename: isProduction ? '[name].[chunkhash].js' : '[name].[id].js',
       chunkFilename: isProduction ? '[name].[chunkhash].js' : '[id].[name].js',
       path: path.resolve(__dirname, 'public'),
-      publicPath: '/'
+      publicPath: '/',
     },
     plugins: [
       new ExtractTextPlugin({
         filename: isProduction ? 'styles.[contenthash].css' : 'styles.[id].css',
         allChunks: true,
-        disable: env === 'development' // OR: !isProduction
+        disable: !isProduction, // OR: env === 'development'
       }),
       // new UglifyJsPlugin({
       //   sourceMap: true,
@@ -50,12 +49,12 @@ module.exports = (env = process.env.NODE_ENV) => {
       // }),
       new webpack.DefinePlugin({
         'process.env': {
-          NODE_ENV: JSON.stringify(env)
-        }
+          NODE_ENV: JSON.stringify(env),
+        },
       }),
       new CleanWebpackPlugin(
         ['public'], // OR: 'dist', removes folder
-        { exclude: ['index.html', 'studios.json'] }
+        { exclude: ['index.html', 'studios.json'] },
       ),
       new HTMLWebpackPlugin({
         title: 'TL App for DJS testcase',
@@ -63,11 +62,11 @@ module.exports = (env = process.env.NODE_ENV) => {
         inject: false,
         template: path.resolve(__dirname, 'src/assets/template-index.html'),
         chunksSortMode(a, b) {
-          const order = ['manifest', 'polyfills', 'vendors', 'bundle'];
+          const order = ['polyfills', 'antd', 'vendors', 'bundle'];
           return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
         },
         appMountId: 'app',
-        mobile: true
+        mobile: true,
         // excludeChunks: ['common']
         // filename: 'assets/custom.html'
         // hash: true // usefull for cache busting
@@ -76,9 +75,10 @@ module.exports = (env = process.env.NODE_ENV) => {
       //   deleteOriginalAssets: true,
       //   test: /\.js/
       // }),
-      // useful during development for more readable output, if compare with
-      // new webpack.NamedModulesPlugin(), // HashedModuleIdsPlugin
-      // new webpack.HashedModuleIdsPlugin(), // better for production
+      ...isProduction ? [new webpack.HashedModuleIdsPlugin()] : [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin(),
+      ],
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendors',
         chunks: ['bundle'],
@@ -89,7 +89,12 @@ module.exports = (env = process.env.NODE_ENV) => {
             return false;
           } // eslint-disable-next-line
           return module.context && module.context.includes('node_modules');
-        }
+        },
+      }),
+      new webpack.optimize.CommonsChunkPlugin({
+        name: ['antd'],
+        chunks: ['vendors'],
+        minChunks: ({ resource }) => resource && (/antd/).test(resource),
       }),
       // new webpack.optimize.CommonsChunkPlugin({
       //   name: 'commons',
@@ -101,29 +106,24 @@ module.exports = (env = process.env.NODE_ENV) => {
       // }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
-        openAnalyzer: false
-      }),
-      new ChunkManifestPlugin({
-        filename: 'manifest.json'
-        // manifestVariable: 'webpackManifest',
-        // inlineManifest: false
+        openAnalyzer: false,
       }),
       new VisualizerPlugin(),
       new DuplPkgCheckrPlugin(),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ],
     resolve: {
       alias: {
         App: path.resolve(__dirname, 'src/components/App.jsx'),
         Components: path.resolve(__dirname, 'src/components'),
-        Utilities: path.resolve(__dirname, 'src/utils')
+        Utilities: path.resolve(__dirname, 'src/utils'),
       },
       modules: [
         // path.resolve(__dirname, 'src/components'),
         path.resolve(__dirname, 'src'),
-        'node_modules'
+        'node_modules',
       ],
-      extensions: ['.js', '.json', '.jsx', '.less', '*']
+      extensions: ['.js', '.json', '.jsx', '.less', '*'],
     },
     module: {
       rules: [
@@ -134,17 +134,18 @@ module.exports = (env = process.env.NODE_ENV) => {
             path.resolve(__dirname, 'src')
           ],
           exclude: [
-            path.resolve(__dirname, 'node_modules')
+            path.resolve(__dirname, 'node_modules'),
           ],
           options: {
             plugins: [
+              'react-hot-loader/babel',
               'fast-async',
               'transform-class-properties',
               ['import', {
                 libraryName: 'antd',
                 libraryDirectory: 'es',
-                style: true // true OR 'css'(without optimization)
-              }]
+                style: true, // true OR 'css'(without optimization)
+              }],
             ],
             presets: [
               ['env', {
@@ -154,23 +155,23 @@ module.exports = (env = process.env.NODE_ENV) => {
                 // useBuiltIns: false,
                 debug: true,
                 targets: {
-                  browsers: ['last 2 versions']
+                  browsers: ['last 2 versions'],
                 },
                 exclude: [
                   'transform-regenerator',
-                  'transform-async-to-generator'
+                  'transform-async-to-generator',
                 ]
               }],
               'react',
-              'stage-3'
-            ]
-          }
+              'stage-3',
+            ],
+          },
         },
         {
           test: /\.(scss|css)$/,
           include: [
             path.resolve(__dirname, 'src'),
-            path.resolve(__dirname, 'node_modules')
+            path.resolve(__dirname, 'node_modules'),
           ],
           use: ExtractTextPlugin.extract({
             use: [
@@ -180,7 +181,7 @@ module.exports = (env = process.env.NODE_ENV) => {
                   importLoaders: 3,
                   // url: false, // enable/disable url() resolution
                   // minimize: true, // OR cssnano config object
-                  sourceMap: true
+                  sourceMap: true,
                 }
               },
               {
@@ -189,17 +190,17 @@ module.exports = (env = process.env.NODE_ENV) => {
                   ident: 'postcss',
                   syntax: scssSyntax,
                   plugins: [
-                    autoprefixer
+                    autoprefixer,
                     // cssnano // with def config it brokes antd spinner
                   ],
-                  sourceMap: true
+                  sourceMap: true,
                 }
               },
               // 'resolve-url-loader',
-              { loader: 'sass-loader', options: { sourceMap: true } }
+              { loader: 'sass-loader', options: { sourceMap: true } },
             ],
-            fallback: 'style-loader'
-          })
+            fallback: 'style-loader',
+          }),
         },
         {
           test: /\.less$/,
@@ -207,7 +208,7 @@ module.exports = (env = process.env.NODE_ENV) => {
             use: [
               {
                 loader: 'css-loader',
-                options: { importLoaders: 2, sourceMap: true }
+                options: { importLoaders: 2, sourceMap: true },
               },
               // {
               //   loader: 'postcss-loader',
@@ -219,11 +220,11 @@ module.exports = (env = process.env.NODE_ENV) => {
               // },
               {
                 loader: 'less-loader',
-                options: { javascriptEnabled: true, sourceMap: true }
-              }
+                options: { javascriptEnabled: true, sourceMap: true },
+              },
             ],
-            fallback: 'style-loader'
-          })
+            fallback: 'style-loader',
+          }),
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/,
@@ -233,9 +234,9 @@ module.exports = (env = process.env.NODE_ENV) => {
               loader: 'file-loader',
               options: {
                 name: '[name].[ext]', // '[name].[hash].[ext]'
-                outputPath: 'assets/img/' // custom output path
-              }
-            }
+                outputPath: 'assets/img/', // custom output path
+              },
+            },
             // {
             //   loader: 'image-webpack-loader',
             //   query: {
@@ -248,8 +249,8 @@ module.exports = (env = process.env.NODE_ENV) => {
             //     }
             //   }
             // }
-          ]
-        }
+          ],
+        },
         // {
         //   test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
         //   loader: 'url-loader',
@@ -257,15 +258,16 @@ module.exports = (env = process.env.NODE_ENV) => {
         //     limit: 10000
         //   }
         // }
-      ]
+      ],
     },
     devServer: {
       progress: true,
       contentBase: path.resolve(__dirname, 'public'),
       compress: true,
-      historyApiFallback: true
+      historyApiFallback: true,
+      hot: true,
       // port: 9000,
     },
-    devtool: isProduction ? 'source-map' : 'eval-source-map'
+    devtool: isProduction ? 'source-map' : 'eval-source-map',
   };
 };

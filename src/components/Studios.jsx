@@ -5,13 +5,13 @@ import { Layout, List, Row, Col } from 'antd';
 import StudioCard from 'components/StudioCard';
 import StudiosFilterContainer from 'containers/StudiosFilterContainer';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 
 class Studios extends Component {
   static propTypes = {
     isLoading: PropTypes.bool.isRequired,
     loadStudios: PropTypes.func.isRequired,
-    studios: PropTypes.instanceOf(Object).isRequired
+    studios: PropTypes.arrayOf(PropTypes.object).isRequired
   }
   componentDidMount() {
     const { loadStudios } = this.props;
@@ -41,16 +41,15 @@ class Studios extends Component {
                     {'LOAD'}
                   </button>
                   <h4>
-                    {`Loading: ${isLoading}`}
+                    {`Loading: ${isLoading && !studios.length}`}
                   </h4>
                   <List
                     dataSource={studios}
                     grid={{ gutter: 20, xs: 1, sm: 2, md: 3, lg: 3 }}
-                    loading={isLoading}
-                    renderItem={item => (
+                    loading={isLoading && !studios.length}
+                    renderItem={studio => (
                       <List.Item>
-                        {/* <StudioCard key={item.id} {...item} /> */}
-                        <StudioCard {...item} />
+                        <StudioCard {...studio} /> {/* OR {studio} */}
                       </List.Item>
                     )}
                   />

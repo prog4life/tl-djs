@@ -14,5 +14,5 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, {
   loadStudios,
   addStudiosFilterTag,
-  setStudiosFilterText
+  setStudiosFilterText,
 })(Studios);

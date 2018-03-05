@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { hot, setConfig } from 'react-hot-loader';
 
 import StudiosContainer from 'containers/StudiosContainer';
 import NotFound from 'components/NotFound';
+
+setConfig({ logLevel: 'debug' });
 
 const routes = (
   <Router>
@@ -23,7 +26,8 @@ const App = ({ store }) => (
 );
 
 App.propTypes = {
-  store: PropTypes.instanceOf(Object).isRequired
+  store: PropTypes.instanceOf(Object).isRequired,
 };
 
-export default App;
+// export default hot(module)(App);
+export default process.env.NODE_ENV === 'production' ? App : hot(module)(App);

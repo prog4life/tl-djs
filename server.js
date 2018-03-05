@@ -40,6 +40,11 @@ app.get('/studios', (req, res, next) => {
   );
   // res.json(studios);
   setTimeout(() => {
+    const randNum = Math.random();
+    if (randNum > 0.6) {
+      res.sendStatus(403);
+      return;
+    }
     res.json(studios);
   }, 3000);
   // res.header('Content-Type', 'application/json');
