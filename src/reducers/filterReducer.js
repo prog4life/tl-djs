@@ -1,7 +1,8 @@
 import {
   ADD_STUDIOS_FILTER_TAG,
   REMOVE_STUDIOS_FILTER_TAG,
-  SET_STUDIOS_FILTER_TEXT
+  SET_STUDIOS_FILTER_TEXT,
+  SET_STUDIOS_PRICE_RANGE,
 } from 'constants/actionTypes';
 
 const defaultFilterState = {
@@ -24,7 +25,13 @@ const filter = (state = defaultFilterState, action) => {
     case SET_STUDIOS_FILTER_TEXT:
       return {
         ...state,
-        searchText: action.searchText
+        searchText: action.searchText.trim().toLoweCase(),
+      };
+    case SET_STUDIOS_PRICE_RANGE:
+      return {
+        ...state,
+        minPrice: action.minPrice,
+        maxPrice: action.maxPrice,
       };
     default:
       return state;

@@ -7,7 +7,7 @@ import { hot, setConfig } from 'react-hot-loader';
 import StudiosContainer from 'containers/StudiosContainer';
 import NotFound from 'components/NotFound';
 
-setConfig({ logLevel: 'debug' });
+setConfig({ logLevel: 'log' }); // ['debug', 'log', 'warn', 'error']
 
 const routes = (
   <Router>

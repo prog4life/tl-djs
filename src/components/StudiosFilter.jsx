@@ -16,7 +16,8 @@ class StudiosFilterForm extends Component {
     form: PropTypes.instanceOf(Object).isRequired,
     removeStudiosFilterTag: PropTypes.func.isRequired,
     setStudiosFilterText: PropTypes.func.isRequired,
-    tags: PropTypes.instanceOf(Array).isRequired
+    setStudiosPriceRange: PropTypes.func.isRequired,
+    tags: PropTypes.instanceOf(Array).isRequired,
   }
   setStudiosFilterTextThrottled = _throttle(
     this.props.setStudiosFilterText,
@@ -24,9 +25,14 @@ class StudiosFilterForm extends Component {
     // NOTE: trailing causes excess setting of field value on search event
     { leading: false, trailing: true }
   )
-  handleAfterClose = tagName => () => {
+  handleTagAfterClose = tagName => () => {
     const { removeStudiosFilterTag } = this.props;
     removeStudiosFilterTag(tagName);
+  }
+  handleSliderAfterChange = ([minPrice, maxPrice]) => {
+    const { setStudiosPriceRange } = this.props;
+    console.log('slider value: ', minPrice, maxPrice);
+    setStudiosPriceRange(minPrice, maxPrice);
   }
   handleSearch = (value) => {
     // TODO: cancel or flush throttled ?
@@ -63,9 +69,9 @@ class StudiosFilterForm extends Component {
               placeholder="Умный поиск!"
             />)
           }
+          <TagList onAfterClose={this.handleTagAfterClose} tags={tags} />
         </FormItem>
-        <TagList onAfterClose={this.handleAfterClose} tags={tags} />
-        <PriceSlider />
+        <PriceSlider onAfterChange={this.handleSliderAfterChange} />
       </Form>
     );
   }

@@ -83,3 +83,30 @@ const studios = (state = defaultState, action) => {
 };
 
 export default studios;
+
+export const getAllStudios = state => Object.values(state.studios.studiosByIds);
+
+export const getStudiosIds = state => Object.keys(state.studios.studiosByIds);
+
+export const getFilteredStudios = (state) => {
+  const { searchText, tags, minPrice, maxPrice } = state.filter;
+  const filteredStudios = getAllStudios(state).filter((studio) => {
+    const isSuitable =
+      (
+        studio.params.some(param =>
+          tags.some(tag => tag.trim().toLoweCase() === param))
+      || studio.params.includes(searchText)
+      )
+      && studio.price >= minPrice
+      && studio.price <= maxPrice;
+    return !isSuitable;
+  });
+  return filteredStudios;
+};
+
+export const getStudiosPriceRange = (state) => {
+  getAllStudios(state).reduce(([min, max], studio) => [
+    min ? Math.min(min, studio.price) : studio.price,
+    max ? Math.max(max, studio.price) : studio.price,
+  ], []);
+};

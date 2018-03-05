@@ -5,10 +5,11 @@ import {
   loadStudios, addStudiosFilterTag, setStudiosFilterText
 } from 'actions';
 import Studios from 'components/Studios';
+import { getAllStudios } from 'reducers/studiosReducer';
 
 const mapStateToProps = state => ({
   isLoading: state.studios.isLoading,
-  studios: Object.values(state.studios.studiosByIds)
+  studios: getAllStudios(state),
 });
 
 export default connect(mapStateToProps, {

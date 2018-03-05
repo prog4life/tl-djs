@@ -5,6 +5,7 @@ import {
   ADD_STUDIOS_FILTER_TAG,
   REMOVE_STUDIOS_FILTER_TAG,
   SET_STUDIOS_FILTER_TEXT,
+  SET_STUDIOS_PRICE_RANGE,
 } from 'constants/actionTypes';
 import transformArrayToObj from 'utils/handleResponse';
 
@@ -38,6 +39,12 @@ export const removeStudiosFilterTag = tagName => ({
 export const setStudiosFilterText = searchText => ({
   type: SET_STUDIOS_FILTER_TEXT,
   searchText,
+});
+
+export const setStudiosPriceRange = (minPrice, maxPrice) => ({
+  type: SET_STUDIOS_PRICE_RANGE,
+  minPrice,
+  maxPrice,
 });
 
 // for promise middleware

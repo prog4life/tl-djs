@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Slider } from 'antd';
 
-const PriceSlider = props => (
+const PriceSlider = ({ onAfterChange }) => (
   <div style={{
     backgroundColor: '#fff',
     // boxShadow: '0 2px 8px rgba(0, 0, 0, 0.09)',
@@ -36,12 +36,16 @@ const PriceSlider = props => (
       defaultValue={[1000, 12000]}
       max={15000}
       min={0}
+      onAfterChange={onAfterChange}
       range
       step={100}
       // onChange={onChange}
-      // onAfterChange={onAfterChange}
     />
   </div>
 );
+
+PriceSlider.propTypes = {
+  onAfterChange: PropTypes.func.isRequired,
+};
 
 export default PriceSlider;

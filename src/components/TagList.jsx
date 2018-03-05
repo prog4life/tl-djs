@@ -14,7 +14,7 @@ const TagList = ({ tags, onAfterClose }) => (
           closable
           color="#3f7eff"
           name={tag}
-          // onClose={this.handleTagClose}
+          // onClose={onTagClose}
         >
           {isLongTag ? `${tag.slice(0, 20)}...` : tag}
         </Tag>
