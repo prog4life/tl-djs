@@ -58,7 +58,7 @@ class StudiosFilterForm extends Component {
     e.preventDefault();
   }
   render() {
-    const { form: { getFieldDecorator }, tags } = this.props;
+    const { form: { getFieldDecorator }, tags, initialPriceRange } = this.props;
     return (
       <Form onSubmit={this.handleSubmit}>
         <FormItem>
@@ -71,7 +71,10 @@ class StudiosFilterForm extends Component {
           }
           <TagList onAfterClose={this.handleTagAfterClose} tags={tags} />
         </FormItem>
-        <PriceSlider onAfterChange={this.handleSliderAfterChange} />
+        <PriceSlider
+          initial={initialPriceRange}
+          onAfterChange={this.handleSliderAfterChange}
+        />
       </Form>
     );
   }

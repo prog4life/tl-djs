@@ -1,15 +1,16 @@
 // import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  loadStudios, addStudiosFilterTag, setStudiosFilterText
-} from 'actions';
 import Studios from 'components/Studios';
-import { getAllStudios } from 'reducers/studiosReducer';
+import {
+  loadStudios, addStudiosFilterTag, setStudiosFilterText,
+} from 'actions';
+import { getFilteredStudios } from 'reducers';
+import { getIsLoading } from 'reducers/studiosReducer';
 
 const mapStateToProps = state => ({
-  isLoading: state.studios.isLoading,
-  studios: getAllStudios(state),
+  isLoading: getIsLoading(state),
+  studios: getFilteredStudios(state),
 });
 
 export default connect(mapStateToProps, {

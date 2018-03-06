@@ -24,12 +24,13 @@
   "globals": {},
   "extends": [
     "airbnb",
-    "plugin:react/all",
+    "plugin:react/all", // OR
+    // "plugin:react/recommended", // looks like default with airbnb
     "plugin:import/errors",
     "plugin:import/warnings"
   ],
   "plugins": [
-    "react",
+    "react", // looks like enabled by default with airbnb
     "compat"
   ],
   "rules": {
@@ -45,7 +46,8 @@
       "minProperties": 5,
       "consistent": true
     }],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/require-optimization": 0,
+    "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
     "react/jsx-max-depth": [0, { "max": 2 }],
     "react/jsx-no-literals": "warn",
     "react/jsx-sort-props": "warn",
