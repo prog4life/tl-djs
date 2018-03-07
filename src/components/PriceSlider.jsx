@@ -1,23 +1,23 @@
-import React, { PureComponent } from 'react';
+import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Slider } from 'antd';
 
-class PriceSlider extends PureComponent {
+class PriceSlider extends Component {
   state = {
-    lowestPrice: null,
-    highestPrice: null,
+    lowest: null,
+    highest: null,
   }
   handleAfterChange = (value) => {
     const { onAfterChange } = this.props;
     this.setState({
-      lowestPrice: value[0],
-      highestPrice: value[1],
+      lowest: value[0],
+      highest: value[1],
     });
     onAfterChange(value);
   }
   render() {
     const { initial: [minInitial, maxInitial] } = this.props;
-    const { lowestPrice, highestPrice } = this.state;
+    const { lowest, highest } = this.state;
     return (
       <div style={{
         backgroundColor: '#fff',
@@ -36,14 +36,22 @@ class PriceSlider extends PureComponent {
             {'Стоимость'}
           </header>
           <div>
+            {/* TODO: check if range is updated with PureComponent
+                reset slider local state on new initialRange props */}
             <span>
-              {lowestPrice || minInitial}
+              {lowest && lowest > minInitial && lowest < maxInitial
+                ? lowest
+                : minInitial
+              }
             </span>
             <span style={{ padding: '0 10px' }}>
               {' - '}
             </span>
             <span>
-              {highestPrice || maxInitial}
+              {highest && highest > minInitial && highest < maxInitial
+                ? highest
+                : maxInitial
+              }
             </span>
           </div>
         </div>

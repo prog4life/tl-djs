@@ -1,20 +1,21 @@
 import { combineReducers } from 'redux';
 
-import studios, { getAllStudios } from './studiosReducer';
-import filter, { getFilterParams } from './filterReducer';
+import studiosReducer, { getAllStudios } from './studiosReducer';
+import filterReducer, { getFilterParams } from './filterReducer';
 
 export default combineReducers({
-  studios,
-  filter,
+  studios: studiosReducer,
+  filter: filterReducer,
 });
 
-export const getFilteredStudios = (state) => {
-  const { searchText, tags, minPrice, maxPrice } = getFilterParams(state.filter);
-  const filteredStudios = getAllStudios(state.studios).filter((studio) => {
+export const getFilteredStudios = ({ studios, filter }) => {
+  const { searchText, tags, minPrice, maxPrice } = getFilterParams(filter);
+  const filteredStudios = getAllStudios(studios).filter((studio) => {
     const isSuitable = (
       studio.price >= minPrice &&
       studio.price <= maxPrice &&
       (studio.params.includes(searchText) ||
+      // check if one of tags match one of studio params
       studio.params.some(param =>
         tags.some(tag => tag.trim().toLowerCase() === param)))
     );

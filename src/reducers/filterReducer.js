@@ -12,34 +12,43 @@ const defaultFilterState = {
   searchText: '',
   tags: ['bird', 'hitech', 'glass'],
   priceRanges: {},
+  idsOfSortedByPrice: [],
 };
 
+export const idsOfSorted = (state = [], action) => {
+  switch (action.type) {
+    case `${LOAD_STUDIOS}_FULFILLED`:
+      return action.payload.map(studio => studio.id);
+    default:
+      return state;
+  }
+};
+
+// MISTAKE: it mutates external data                                             !!!
 export const countStudiosLowestPrice = studios => (
-  studios.reduce((prev, studio) => (
-    prev < studio.price ? prev : studio.price
-  ))
+  studios.sort((s1, s2) => s1.price - s2.price)[0]
 );
 
 export const countStudiosHighestPrice = studios => (
-  studios.reduce((prev, studio) => (
-    prev.price > studio.price ? prev.price : studio.price
-  ))
+  studios.sort((s1, s2) => s1.price - s2.price)[0]
 );
 
 const priceRanges = (state = {}, action) => {
   if (action.type === `${LOAD_STUDIOS}_FULFILLED`) {
-    const prevMinPrice = state.sliderMin;
-    const prevMaxPrice = state.sliderMax;
-    const studiosLowest = countStudiosLowestPrice(action.payload);
-    const studiosHighest = countStudiosHighestPrice(action.payload);
+    // const prevMinPrice = state.sliderMin;
+    // const prevMaxPrice = state.sliderMax;
+    const studiosLowest = action.payload[0].price;
+    const studiosHighest = action.payload.slice(-1)[0].price;
 
     return {
-      sliderMin: prevMinPrice && prevMinPrice > studiosLowest
-        ? prevMinPrice
-        : studiosLowest,
-      sliderMax: prevMaxPrice && prevMaxPrice < studiosHighest
-        ? prevMaxPrice
-        : studiosHighest,
+      // sliderMin: prevMinPrice && prevMinPrice > studiosLowest
+      //   ? prevMinPrice
+      //   : studiosLowest,
+      // sliderMax: prevMaxPrice && prevMaxPrice < studiosHighest
+      //   ? prevMaxPrice
+      //   : studiosHighest,
+      sliderMin: studiosLowest,
+      sliderMax: studiosHighest,
       studiosLowest,
       studiosHighest,
     };
@@ -53,7 +62,7 @@ const priceRanges = (state = {}, action) => {
   return state;
 };
 
-const filter = (state = defaultFilterState, action) => {
+const filterReducer = (state = defaultFilterState, action) => {
   switch (action.type) {
     case ADD_STUDIOS_FILTER_TAG: // TODO: prevent additon of duplicate tag
       return {
@@ -81,6 +90,7 @@ const filter = (state = defaultFilterState, action) => {
       return {
         ...state,
         priceRanges: priceRanges(state.priceRanges, action),
+        idsOfSortedByPrice: idsOfSorted(state.idsOfSortedByPrice, action),
       };
     }
     default:
@@ -88,7 +98,7 @@ const filter = (state = defaultFilterState, action) => {
   }
 };
 
-export default filter;
+export default filterReducer;
 
 export const getLowestPrice = state => state.filter.minPrice;
 export const getHighestPrice = state => state.filter.maxPrice;

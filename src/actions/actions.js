@@ -60,7 +60,8 @@ export const loadStudios = () => (dispatch, getState) => {
   }
   const url = 'http://localhost:8585/studios';
   const promise = fetch(url, { mode: 'cors' })
-    .then(res => (res.ok ? res.json() : Promise.reject(res.statusText)));
+    .then(res => (res.ok ? res.json() : Promise.reject(res.statusText)))
+    .then(response => response.sort((s1, s2) => s1.price - s2.price));
   dispatch({ type: LOAD_STUDIOS, payload: promise });
   // return promise;
 };
@@ -83,7 +84,7 @@ export const loadStudios = () => (dispatch, getState) => {
 //     .then(studios =>
 //       dispatch(loadStudiosSuccess(studios))
 //     )
-// TODO: replace catch by 2nd arg rejection handler
+// TODO: replace catch by 2nd arg rejection handler to prevent showing extras
 //     .catch(error =>
 //       // dispatch(loadStudiosFail(error))
 //       console.error(error)

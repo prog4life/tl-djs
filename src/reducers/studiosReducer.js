@@ -10,34 +10,45 @@ const LOAD_STUDIOS = 'LOAD_STUDIOS';
 const defaultState = {
   isLoading: false,
   studiosByIds: {},
+  sortedByPriceIds: [],
 };
 
-// NOTE: Dans's initial solution, before using normalize
-const transformArrayToObj = (state, action) => {
-  const nextState = { ...state };
-  action.response.forEach((studio) => {
-    nextState[studio.id] = studio;
+// NOTE: Dan's initial solution, until normalize was added
+// const transformArrayToObj = (state = {}, action) => {
+//   const nextState = { ...state };
+//   action.payload.forEach((studio) => {
+//     nextState[studio.id] = studio;
+//   });
+//   return nextState;
+// };
+
+const transformArrayToObj = (studios) => {
+  const next = {};
+  studios.forEach((studio) => {
+    next[studio.id] = studio;
   });
-  return nextState;
+  return next;
 };
 
-// TODO: and replace close to filter reducer 
-const isLoading = (state = false, action) => {
-  if (action.filter !== filter) { // video 21: displaying loading indicators
-    return state;
-  }
-  switch (action.type) {
-    case LOAD_STUDIOS_REQUEST:
-      return true;
-    case LOAD_STUDIOS_SUCCESS:
-    case LOAD_STUDIOS_FAIL:
-      return false;
-    default:
-      return state;
-  }
-};
+// // TODO: and replace close to filter reducer
+// const isLoading = (state = false, action) => {
+//   if (action.filter !== filter) { // video 21: displaying loading indicators
+//     return state;
+//   }
+//   switch (action.type) {
+//     case LOAD_STUDIOS_REQUEST:
+//       return true;
+//     case LOAD_STUDIOS_SUCCESS:
+//     case LOAD_STUDIOS_FAIL:
+//       return false;
+//     default:
+//       return state;
+//   }
+// };
 
-const studios = (state = defaultState, action) => {
+// export const sortedByPriceIds = (state, action)
+
+const studiosReducer = (state = defaultState, action) => {
   switch (action.type) {
     // case LOAD_STUDIOS_REQUEST:
     //   return {
@@ -62,14 +73,14 @@ const studios = (state = defaultState, action) => {
         isLoading: true,
         studiosByIds: {},
         errorMessage: null,
+        sortedByPriceIds: [],
       };
     case `${LOAD_STUDIOS}_FULFILLED`:
       return {
+        ...state,
         isLoading: false,
-        studiosByIds: {
-          // ...state.studiosByIds,
-          ...action.payload,
-        },
+        // consider leaving existing studios
+        studiosByIds: transformArrayToObj(action.payload),
       };
     case `${LOAD_STUDIOS}_REJECTED`:
       return {
@@ -82,7 +93,7 @@ const studios = (state = defaultState, action) => {
   }
 };
 
-export default studios;
+export default studiosReducer;
 
 export const getAllStudios = studios => Object.values(studios.studiosByIds);
 
