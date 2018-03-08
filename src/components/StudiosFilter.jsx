@@ -30,7 +30,7 @@ class StudiosFilterForm extends Component {
     const { removeFilterTag } = this.props;
     removeFilterTag(tagName);
   }
-  handleSliderAfterChange = ([minPrice, maxPrice]) => {
+  handleSliderChange = ([minPrice, maxPrice]) => {
     const { setFilterRange } = this.props;
     console.log('slider value: ', minPrice, maxPrice);
     setFilterRange(minPrice, maxPrice);
@@ -74,7 +74,7 @@ class StudiosFilterForm extends Component {
         </FormItem>
         <FilteringSlider
           baseRange={basePriceRange}
-          onAfterChange={this.handleSliderAfterChange}
+          onChange={this.handleSliderChange}
         />
       </Form>
     );

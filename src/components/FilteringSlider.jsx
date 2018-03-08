@@ -8,38 +8,66 @@ class FilteringSlider extends PureComponent {
     highest: null,
   }
   componentWillReceiveProps(nextProps) {
-    const { lowest, highest } = this.state;
-    const [baseMin, baseMax] = nextProps.baseRange;
-
-    // if (lowest < baseMin || lowest > baseMax) {
-    //   this.setState({ lowest: null });
-    // }
-    // if (highest < baseMin || highest > baseMax) {
-    //   this.setState({ highest: null });
-    // }
-    this.setState((prevState) => {
-      const { lowest, highest } = prevState;
-      if (lowest < baseMin || lowest > baseMax) {
-        return { lowest: null };
-      }
-      if (highest < baseMin || highest > baseMax) {
-        return { highest: null };
-      }
-      return { ...prevState };
-    });
     console.log('is props the same: ', this.props === nextProps);
+
+    // if (this.props === nextProps) {
+    //   return;
+    // }
+    // const [baseMin, baseMax] = nextProps.baseRange;
+
+    // this.setState((prevState) => {
+    //   const { lowest, highest } = prevState;
+    //   let nextLowest = lowest;
+    //   let nextHighest = highest;
+
+    //   if (lowest && (lowest < baseMin || lowest > baseMax)) {
+    //     nextLowest = null;
+    //   }
+    //   if (highest && (highest < baseMin || highest > baseMax)) {
+    //     nextHighest = null;
+    //   }
+    //   if (lowest !== nextLowest || highest !== nextHighest) {
+    //     return { lowest: nextLowest, highest: nextHighest };
+    //   }
+    //   return null;
+    // });
   }
-  handleAfterChange = (value) => {
-    const { onAfterChange } = this.props;
+  // handleAfterChange = (value) => {
+  //   const { onAfterChange } = this.props;
+  //   this.setState({
+  //     lowest: value[0],
+  //     highest: value[1],
+  //   });
+  //   onAfterChange(value);
+  // }
+  handleChange = (value) => {
+    console.log('onchange value ', value);
+    const { onChange } = this.props;
     this.setState({
       lowest: value[0],
       highest: value[1],
     });
-    onAfterChange(value);
+    onChange(value);
+  }
+  // TODO: try avoid creating of new array somehow, maybe use setState, 
+  // replace to componentWillReceiveProps
+  countRange = (lowest, highest, baseMin, baseMax) => {
+    let nextLowest = baseMin;
+    let nextHighest = baseMax;
+
+    if (lowest && lowest > baseMin && lowest < baseMax) {
+      nextLowest = lowest;
+    }
+    if (highest && highest > baseMin && highest < baseMax) {
+      nextHighest = highest;
+    }
+    return [nextLowest, nextHighest];
   }
   render() {
     const { baseRange: [baseMin, baseMax], step } = this.props;
     const { lowest, highest } = this.state;
+    const nextRange = this.countRange(lowest, highest, baseMin, baseMax);
+
     return (
       <div style={{
         backgroundColor: '#fff',
@@ -59,21 +87,15 @@ class FilteringSlider extends PureComponent {
           </header>
           <div>
             {/* TODO: check if range is updated with PureComponent
-                reset slider local state on new initialRange props */}
+                reset slider local state on new baseRange props */}
             <span>
-              {lowest && lowest > baseMin && lowest < baseMax
-                ? lowest
-                : baseMin
-              }
+              {nextRange[0]}
             </span>
             <span style={{ padding: '0 10px' }}>
               {' - '}
             </span>
             <span>
-              {highest && highest > baseMin && highest < baseMax
-                ? highest
-                : baseMax
-              }
+              {nextRange[1]}
             </span>
           </div>
         </div>
@@ -81,10 +103,11 @@ class FilteringSlider extends PureComponent {
           defaultValue={[baseMin, baseMax]}
           max={baseMax}
           min={baseMin}
-          onAfterChange={this.handleAfterChange}
+          // onAfterChange={this.handleAfterChange}
+          onChange={this.handleChange}
           range
           step={step}
-          // onChange={onChange}
+          value={nextRange}
         />
       </div>
     );
@@ -93,7 +116,7 @@ class FilteringSlider extends PureComponent {
 
 FilteringSlider.propTypes = {
   baseRange: PropTypes.arrayOf(PropTypes.number).isRequired,
-  onAfterChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
   step: PropTypes.number,
 };
 
