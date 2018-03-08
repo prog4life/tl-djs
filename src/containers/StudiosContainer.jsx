@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 
 import Studios from 'components/Studios';
 import {
-  loadStudios, addStudiosFilterTag, setStudiosFilterText,
+  loadStudios, addFilterTag, setFilterText,
 } from 'actions';
-import { getFilteredStudios } from 'reducers';
-import { getIsLoading } from 'reducers/studiosReducer';
+import { getIsLoading, getFilteredStudios } from 'reducers';
 
 const mapStateToProps = state => ({
   isLoading: getIsLoading(state),
@@ -15,6 +14,6 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
   loadStudios,
-  addStudiosFilterTag,
-  setStudiosFilterText,
+  addFilterTag,
+  setFilterText,
 })(Studios);

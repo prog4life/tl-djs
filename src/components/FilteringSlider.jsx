@@ -2,10 +2,32 @@ import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Slider } from 'antd';
 
-class PriceSlider extends Component {
+class FilteringSlider extends PureComponent {
   state = {
     lowest: null,
     highest: null,
+  }
+  componentWillReceiveProps(nextProps) {
+    const { lowest, highest } = this.state;
+    const [baseMin, baseMax] = nextProps.baseRange;
+
+    // if (lowest < baseMin || lowest > baseMax) {
+    //   this.setState({ lowest: null });
+    // }
+    // if (highest < baseMin || highest > baseMax) {
+    //   this.setState({ highest: null });
+    // }
+    this.setState((prevState) => {
+      const { lowest, highest } = prevState;
+      if (lowest < baseMin || lowest > baseMax) {
+        return { lowest: null };
+      }
+      if (highest < baseMin || highest > baseMax) {
+        return { highest: null };
+      }
+      return { ...prevState };
+    });
+    console.log('is props the same: ', this.props === nextProps);
   }
   handleAfterChange = (value) => {
     const { onAfterChange } = this.props;
@@ -16,7 +38,7 @@ class PriceSlider extends Component {
     onAfterChange(value);
   }
   render() {
-    const { initial: [minInitial, maxInitial] } = this.props;
+    const { baseRange: [baseMin, baseMax], step } = this.props;
     const { lowest, highest } = this.state;
     return (
       <div style={{
@@ -39,29 +61,29 @@ class PriceSlider extends Component {
             {/* TODO: check if range is updated with PureComponent
                 reset slider local state on new initialRange props */}
             <span>
-              {lowest && lowest > minInitial && lowest < maxInitial
+              {lowest && lowest > baseMin && lowest < baseMax
                 ? lowest
-                : minInitial
+                : baseMin
               }
             </span>
             <span style={{ padding: '0 10px' }}>
               {' - '}
             </span>
             <span>
-              {highest && highest > minInitial && highest < maxInitial
+              {highest && highest > baseMin && highest < baseMax
                 ? highest
-                : maxInitial
+                : baseMax
               }
             </span>
           </div>
         </div>
         <Slider
-          defaultValue={[minInitial, maxInitial]}
-          max={maxInitial}
-          min={minInitial}
+          defaultValue={[baseMin, baseMax]}
+          max={baseMax}
+          min={baseMin}
           onAfterChange={this.handleAfterChange}
           range
-          step={100}
+          step={step}
           // onChange={onChange}
         />
       </div>
@@ -69,19 +91,21 @@ class PriceSlider extends Component {
   }
 }
 
-PriceSlider.propTypes = {
-  initial: PropTypes.arrayOf(PropTypes.number),
+FilteringSlider.propTypes = {
+  baseRange: PropTypes.arrayOf(PropTypes.number).isRequired,
   onAfterChange: PropTypes.func.isRequired,
+  step: PropTypes.number,
 };
 
-PriceSlider.defaultProps = {
-  initial: [0, 10000],
+FilteringSlider.defaultProps = {
+  // baseRange: [0, 10000],
+  step: 100,
 };
 
-export default PriceSlider;
+export default FilteringSlider;
 
-// const PriceSlider = ({
-//   onAfterChange, initial: [minInitial, maxInitial], lowest, highest,
+// const FilteringSlider = ({
+//   onAfterChange, baseRange: [baseMin, baseMax], lowest, highest,
 // }) => (
 //   <div style={{
 //     backgroundColor: '#fff',
@@ -102,20 +126,20 @@ export default PriceSlider;
 //       </header>
 //       <div>
 //         <span>
-//           {lowest || minInitial}
+//           {lowest || baseMin}
 //         </span>
 //         <span style={{ padding: '0 10px' }}>
 //           {' - '}
 //         </span>
 //         <span>
-//           {highest || maxInitial}
+//           {highest || baseMax}
 //         </span>
 //       </div>
 //     </div>
 //     <Slider
-//       defaultValue={[minInitial, maxInitial]}
-//       max={maxInitial}
-//       min={minInitial}
+//       defaultValue={[baseMin, baseMax]}
+//       max={baseMax}
+//       min={baseMin}
 //       onAfterChange={onAfterChange}
 //       range
 //       step={100}

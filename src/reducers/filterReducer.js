@@ -1,96 +1,95 @@
 import {
-  ADD_STUDIOS_FILTER_TAG,
-  REMOVE_STUDIOS_FILTER_TAG,
-  SET_STUDIOS_FILTER_TEXT,
-  SET_STUDIOS_PRICE_RANGE,
+  ADD_FILTER_TAG,
+  REMOVE_FILTER_TAG,
+  SET_FILTER_TEXT,
+  SET_FILTER_RANGE,
 } from 'constants/actionTypes';
 
 // TEMP:
 const LOAD_STUDIOS = 'LOAD_STUDIOS';
 
-const defaultFilterState = {
+const defaultState = {
   searchText: '',
   tags: ['bird', 'hitech', 'glass'],
-  priceRanges: {},
-  idsOfSortedByPrice: [],
+  baseRange: [0, 10000],
+  selectedRange: [],
 };
 
-export const idsOfSorted = (state = [], action) => {
-  switch (action.type) {
-    case `${LOAD_STUDIOS}_FULFILLED`:
-      return action.payload.map(studio => studio.id);
-    default:
-      return state;
-  }
-};
+// MISTAKE: sort mutates external data                                             !!!
 
-// MISTAKE: it mutates external data                                             !!!
-export const countStudiosLowestPrice = studios => (
-  studios.sort((s1, s2) => s1.price - s2.price)[0]
-);
+// const priceRanges = (state = {}, action) => {
+//   if (action.type === `${LOAD_STUDIOS}_FULFILLED`) {
+//     // const prevMinPrice = state.filterMin;
+//     // const prevMaxPrice = state.filterMax;
+//     const sorted = [...action.payload].sort((s1, s2) => s1.price - s2.price);
+//     const lowest = sorted[0].price;
+//     const highest = sorted.slice(-1)[0].price;
 
-export const countStudiosHighestPrice = studios => (
-  studios.sort((s1, s2) => s1.price - s2.price)[0]
-);
+//     return {
+//       // filterMin: prevMinPrice && prevMinPrice > lowest
+//       //   ? prevMinPrice
+//       //   : lowest,
+//       // filterMax: prevMaxPrice && prevMaxPrice < highest
+//       //   ? prevMaxPrice
+//       //   : highest,
+//       filterMin: lowest,
+//       filterMax: highest,
+//       lowest,
+//       highest,
+//     };
+//   } else if (action.type === SET_FILTER_RANGE) {
+//     return {
+//       ...state,
+//       filterMin: action.minPrice,
+//       filterMax: action.maxPrice,
+//     };
+//   }
+//   return state;
+// };
 
-const priceRanges = (state = {}, action) => {
+export const baseRange = (state, action) => {
   if (action.type === `${LOAD_STUDIOS}_FULFILLED`) {
-    // const prevMinPrice = state.sliderMin;
-    // const prevMaxPrice = state.sliderMax;
-    const studiosLowest = action.payload[0].price;
-    const studiosHighest = action.payload.slice(-1)[0].price;
+    const [first] = action.payload;
+    const [last] = action.payload.slice(-1);
+    const lowest = first && first.price;
+    const highest = last && last.price;
+    // TODO: test with 1000 and 1000
 
-    return {
-      // sliderMin: prevMinPrice && prevMinPrice > studiosLowest
-      //   ? prevMinPrice
-      //   : studiosLowest,
-      // sliderMax: prevMaxPrice && prevMaxPrice < studiosHighest
-      //   ? prevMaxPrice
-      //   : studiosHighest,
-      sliderMin: studiosLowest,
-      sliderMax: studiosHighest,
-      studiosLowest,
-      studiosHighest,
-    };
-  } else if (action.type === SET_STUDIOS_PRICE_RANGE) {
-    return {
-      ...state,
-      sliderMin: action.minPrice,
-      sliderMax: action.maxPrice,
-    };
+    if (lowest && highest && lowest !== highest) {
+      return [lowest, highest];
+    } else if (lowest === highest) {
+      return [0, highest];
+    }
   }
   return state;
 };
 
-const filterReducer = (state = defaultFilterState, action) => {
+const filterReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case ADD_STUDIOS_FILTER_TAG: // TODO: prevent additon of duplicate tag
+    case ADD_FILTER_TAG: // TODO: prevent additon of duplicate tag
       return {
         ...state,
         tags: [...state.tags, action.tagName]
       };
-    case REMOVE_STUDIOS_FILTER_TAG:
+    case REMOVE_FILTER_TAG:
       return {
         ...state,
         tags: state.tags.filter(tag => tag !== action.tagName)
       };
-    case SET_STUDIOS_FILTER_TEXT:
+    case SET_FILTER_TEXT:
       return {
         ...state,
         searchText: action.searchText.trim().toLowerCase(),
       };
-    // case SET_STUDIOS_PRICE_RANGE:
-    //   return {
-    //     ...state,
-    //     minPrice: action.minPrice,
-    //     maxPrice: action.maxPrice,
-    //   };
-    case SET_STUDIOS_PRICE_RANGE:
+    case SET_FILTER_RANGE:
+      return {
+        ...state,
+        selectedRange: [action.min, action.max],
+      };
     case `${LOAD_STUDIOS}_FULFILLED`: {
       return {
         ...state,
-        priceRanges: priceRanges(state.priceRanges, action),
-        idsOfSortedByPrice: idsOfSorted(state.idsOfSortedByPrice, action),
+        baseRange: baseRange(state.baseRange, action),
       };
     }
     default:
@@ -103,17 +102,11 @@ export default filterReducer;
 export const getLowestPrice = state => state.filter.minPrice;
 export const getHighestPrice = state => state.filter.maxPrice;
 
-export const getInitialPriceRange = ({
-  filter: { priceRanges: { studiosLowest, studiosHighest } },
-}) => (
-  studiosLowest && studiosHighest
-    ? [studiosLowest, studiosHighest]
-    : undefined
-);
+export const getBaseRange = state => state.baseRange;
 
-export const getFilterParams = ({ searchText, tags, priceRanges }) => ({
+export const getFilteringParams = ({ searchText, tags, selectedRange }) => ({
   searchText,
   tags,
-  minPrice: priceRanges.sliderMin || priceRanges.studiosLowest,
-  maxPrice: priceRanges.sliderMax || priceRanges.studiosHighest,
+  minPrice: selectedRange[0] || baseRange[0],
+  maxPrice: selectedRange[1] || baseRange[1],
 });

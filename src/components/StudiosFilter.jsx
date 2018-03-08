@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _throttle from 'lodash.throttle';
 import { Form, Input } from 'antd';
-import PriceSlider from 'components/PriceSlider';
+import FilteringSlider from 'components/FilteringSlider';
 import TagList from 'components/TagList';
 
 const FormItem = Form.Item;
@@ -12,53 +12,54 @@ const { Search } = Input;
 
 class StudiosFilterForm extends Component {
   static propTypes = {
-    addStudiosFilterTag: PropTypes.func.isRequired,
+    addFilterTag: PropTypes.func.isRequired,
+    basePriceRange: PropTypes.arrayOf(PropTypes.number).isRequired,
     form: PropTypes.instanceOf(Object).isRequired,
-    removeStudiosFilterTag: PropTypes.func.isRequired,
-    setStudiosFilterText: PropTypes.func.isRequired,
-    setStudiosPriceRange: PropTypes.func.isRequired,
+    removeFilterTag: PropTypes.func.isRequired,
+    setFilterRange: PropTypes.func.isRequired,
+    setFilterText: PropTypes.func.isRequired,
     tags: PropTypes.instanceOf(Array).isRequired,
   }
-  setStudiosFilterTextThrottled = _throttle(
-    this.props.setStudiosFilterText,
+  setFilterTextThrottled = _throttle(
+    this.props.setFilterText,
     1000,
     // NOTE: trailing causes excess setting of field value on search event
     { leading: false, trailing: true }
   )
   handleTagAfterClose = tagName => () => {
-    const { removeStudiosFilterTag } = this.props;
-    removeStudiosFilterTag(tagName);
+    const { removeFilterTag } = this.props;
+    removeFilterTag(tagName);
   }
   handleSliderAfterChange = ([minPrice, maxPrice]) => {
-    const { setStudiosPriceRange } = this.props;
+    const { setFilterRange } = this.props;
     console.log('slider value: ', minPrice, maxPrice);
-    setStudiosPriceRange(minPrice, maxPrice);
+    setFilterRange(minPrice, maxPrice);
   }
   handleSearch = (value) => {
     // TODO: cancel or flush throttled ?
-    this.setStudiosFilterTextThrottled.cancel();
+    this.setFilterTextThrottled.cancel();
     const val = value.trim();
     if (!val || val.length < 1) {
       // TODO: use provided by lib validation
       return;
     }
-    const { addStudiosFilterTag, setStudiosFilterText, form } = this.props;
+    const { addFilterTag, setFilterText, form } = this.props;
     // console.log('search value: ', val);
-    addStudiosFilterTag(val);
-    setStudiosFilterText('');
+    addFilterTag(val);
+    setFilterText('');
     form.setFieldsValue({ search: '' }); // OR: form.resetFields('search');
   }
   handleSearchChange = (e) => {
-    // const { setStudiosFilterText } = this.props;
+    // const { setFilterText } = this.props;
     // NOTE: form.getFieldValue('search') returns prev value here
     console.log('on search change e.target.value: ', e.target.value);
-    this.setStudiosFilterTextThrottled(e.target.value);
+    this.setFilterTextThrottled(e.target.value);
   }
   handleSubmit = (e) => {
     e.preventDefault();
   }
   render() {
-    const { form: { getFieldDecorator }, tags, initialPriceRange } = this.props;
+    const { form: { getFieldDecorator }, tags, basePriceRange } = this.props;
     return (
       <Form onSubmit={this.handleSubmit}>
         <FormItem>
@@ -71,8 +72,8 @@ class StudiosFilterForm extends Component {
           }
           <TagList onAfterClose={this.handleTagAfterClose} tags={tags} />
         </FormItem>
-        <PriceSlider
-          initial={initialPriceRange}
+        <FilteringSlider
+          baseRange={basePriceRange}
           onAfterChange={this.handleSliderAfterChange}
         />
       </Form>
@@ -82,9 +83,9 @@ class StudiosFilterForm extends Component {
 
 export default Form.create({
   onFieldsChange: _throttle(
-    ({ setStudiosFilterText }, changedFields) =>
+    ({ setFilterText }, changedFields) =>
     // console.log('changedFields.search.value: ', changedFields.search.value);
-      setStudiosFilterText(changedFields.search.value),
+      setFilterText(changedFields.search.value),
     1000,
     { leading: true, trailing: true },
   ),

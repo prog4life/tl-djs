@@ -10,7 +10,7 @@ const LOAD_STUDIOS = 'LOAD_STUDIOS';
 const defaultState = {
   isLoading: false,
   studiosByIds: {},
-  sortedByPriceIds: [],
+  sortedByPrice: [],
 };
 
 // NOTE: Dan's initial solution, until normalize was added
@@ -28,6 +28,15 @@ const transformArrayToObj = (studios) => {
     next[studio.id] = studio;
   });
   return next;
+};
+
+export const sortedByPrice = (state = [], action) => {
+  switch (action.type) {
+    case `${LOAD_STUDIOS}_FULFILLED`:
+      return action.payload.map(studio => studio.id);
+    default:
+      return state;
+  }
 };
 
 // // TODO: and replace close to filter reducer
@@ -73,14 +82,15 @@ const studiosReducer = (state = defaultState, action) => {
         isLoading: true,
         studiosByIds: {},
         errorMessage: null,
-        sortedByPriceIds: [],
+        sortedByPrice: [],
       };
     case `${LOAD_STUDIOS}_FULFILLED`:
       return {
         ...state,
         isLoading: false,
-        // consider leaving existing studios
+        // consider not replacing but adding to existing studios
         studiosByIds: transformArrayToObj(action.payload),
+        sortedByPrice: sortedByPrice(state.sortedByPrice, action),
       };
     case `${LOAD_STUDIOS}_REJECTED`:
       return {
@@ -95,11 +105,12 @@ const studiosReducer = (state = defaultState, action) => {
 
 export default studiosReducer;
 
-export const getAllStudios = studios => Object.values(studios.studiosByIds);
+export const getAll = state => Object.values(state.studiosByIds);
 
-export const getStudiosIds = studios => Object.keys(studios.studiosByIds);
+// TODO: get ids of sorted
+export const getIds = state => Object.keys(state.studiosByIds);
 
-export const getIsLoading = state => state.studios.isLoading;
+export const getIsLoading = state => state.isLoading;
 
 // export const getFilteredStudios = (state) => {
 //   const { searchText, tags, minPrice, maxPrice } = state.filter;
@@ -116,16 +127,16 @@ export const getIsLoading = state => state.studios.isLoading;
 //   return filteredStudios;
 // };
 
-// export const countStudiosPriceRange = studios => (
+// export const countBasePriceRange = studios => (
 //   studios.reduce(([min, max], studio) => [
 //     min ? Math.min(min, studio.price) : studio.price,
 //     max ? Math.max(max, studio.price) : studio.price,
 //   ], [])
 // );
 
-// export const getInitialPriceRange = (state) => {
+// export const getBaseRange = (state) => {
 //   const allStudios = getAllStudios(state);
-//   const range = countStudiosPriceRange(allStudios);
+//   const range = countBasePriceRange(allStudios);
 //   return range.length ? range : undefined;
 // };
 // NOTE: or sort and choose 1st and last

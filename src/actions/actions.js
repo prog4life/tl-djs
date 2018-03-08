@@ -2,10 +2,10 @@ import {
   LOAD_STUDIOS_REQUEST,
   LOAD_STUDIOS_SUCCESS,
   LOAD_STUDIOS_FAIL,
-  ADD_STUDIOS_FILTER_TAG,
-  REMOVE_STUDIOS_FILTER_TAG,
-  SET_STUDIOS_FILTER_TEXT,
-  SET_STUDIOS_PRICE_RANGE,
+  ADD_FILTER_TAG,
+  REMOVE_FILTER_TAG,
+  SET_FILTER_TEXT,
+  SET_FILTER_RANGE,
 } from 'constants/actionTypes';
 import transformArrayToObj from 'utils/handleResponse';
 
@@ -26,25 +26,25 @@ export const loadStudiosFail = error => ({
   message: error.message || 'Failed to load studios',
 });
 
-export const addStudiosFilterTag = tagName => ({
-  type: ADD_STUDIOS_FILTER_TAG,
+export const addFilterTag = tagName => ({
+  type: ADD_FILTER_TAG,
   tagName,
 });
 
-export const removeStudiosFilterTag = tagName => ({
-  type: REMOVE_STUDIOS_FILTER_TAG,
+export const removeFilterTag = tagName => ({
+  type: REMOVE_FILTER_TAG,
   tagName,
 });
 
-export const setStudiosFilterText = searchText => ({
-  type: SET_STUDIOS_FILTER_TEXT,
+export const setFilterText = searchText => ({
+  type: SET_FILTER_TEXT,
   searchText,
 });
 
-export const setStudiosPriceRange = (minPrice, maxPrice) => ({
-  type: SET_STUDIOS_PRICE_RANGE,
-  minPrice,
-  maxPrice,
+export const setFilterRange = (min, max) => ({
+  type: SET_FILTER_RANGE,
+  min,
+  max,
 });
 
 // for promise middleware
