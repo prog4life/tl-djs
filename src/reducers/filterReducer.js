@@ -102,11 +102,19 @@ export default filterReducer;
 export const getLowestPrice = state => state.filter.minPrice;
 export const getHighestPrice = state => state.filter.maxPrice;
 
+export const getSearchText = state => state.searchText;
+
+export const getAllTags = state => state.tags;
+
 export const getBaseRange = state => state.baseRange;
 
-export const getFilteringParams = ({ searchText, tags, selectedRange }) => ({
-  searchText,
-  tags,
-  minPrice: selectedRange[0] || baseRange[0],
-  maxPrice: selectedRange[1] || baseRange[1],
-});
+export function getFilteringParams(state) {
+  const { searchText, tags, selectedRange } = state;
+
+  return {
+    searchText,
+    tags,
+    minPrice: selectedRange[0] || state.baseRange[0],
+    maxPrice: selectedRange[1] || state.baseRange[1],
+  };
+}

@@ -24,9 +24,9 @@ class StudiosFilterForm extends Component {
     this.props.setFilterText,
     1000,
     // NOTE: trailing causes excess setting of field value on search event
-    { leading: false, trailing: true }
+    { leading: false, trailing: true },
   )
-  handleTagAfterClose = tagName => () => {
+  handleTagClose = tagName => () => {
     const { removeFilterTag } = this.props;
     removeFilterTag(tagName);
   }
@@ -70,7 +70,7 @@ class StudiosFilterForm extends Component {
               placeholder="Умный поиск!"
             />)
           }
-          <TagList onAfterClose={this.handleTagAfterClose} tags={tags} />
+          <TagList onClose={this.handleTagClose} tags={tags} />
         </FormItem>
         <FilteringSlider
           baseRange={basePriceRange}

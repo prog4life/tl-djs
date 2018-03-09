@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 
 import StudiosFilter from 'components/StudiosFilter';
 import * as actions from 'actions';
-import { getBasePriceRange } from 'reducers';
+import {
+  getFilterSearchText, getFilterTags, getBasePriceRange,
+} from 'reducers';
 
 const mapStateToProps = state => ({
-  searchText: state.filter.searchText,
-  tags: state.filter.tags,
+  searchText: getFilterSearchText(state),
+  tags: getFilterTags(state),
   basePriceRange: getBasePriceRange(state),
   // lowestPrice: getLowestPrice(state),
   // highestPrice: getHighestPrice(state),

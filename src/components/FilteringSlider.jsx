@@ -1,5 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _throttle from 'lodash.throttle';
 import { Slider } from 'antd';
 
 class FilteringSlider extends PureComponent {
@@ -10,63 +11,53 @@ class FilteringSlider extends PureComponent {
   componentWillReceiveProps(nextProps) {
     console.log('is props the same: ', this.props === nextProps);
 
-    // if (this.props === nextProps) {
-    //   return;
-    // }
-    // const [baseMin, baseMax] = nextProps.baseRange;
+    if (this.props === nextProps) {
+      return;
+    }
+    const [baseMin, baseMax] = nextProps.baseRange;
 
-    // this.setState((prevState) => {
-    //   const { lowest, highest } = prevState;
-    //   let nextLowest = lowest;
-    //   let nextHighest = highest;
+    this.setState((prevState) => {
+      const { lowest, highest } = prevState;
+      const nextState = { lowest, highest };
 
-    //   if (lowest && (lowest < baseMin || lowest > baseMax)) {
-    //     nextLowest = null;
-    //   }
-    //   if (highest && (highest < baseMin || highest > baseMax)) {
-    //     nextHighest = null;
-    //   }
-    //   if (lowest !== nextLowest || highest !== nextHighest) {
-    //     return { lowest: nextLowest, highest: nextHighest };
-    //   }
-    //   return null;
-    // });
+      if (!lowest || lowest < baseMin || lowest > baseMax) {
+        nextState.lowest = baseMin;
+      }
+      if (!highest || highest < baseMin || highest > baseMax) {
+        nextState.highest = baseMax;
+      }
+      if (lowest !== nextState.lowest || highest !== nextState.highest) {
+        return nextState;
+      }
+      return null;
+    });
   }
-  // handleAfterChange = (value) => {
-  //   const { onAfterChange } = this.props;
-  //   this.setState({
-  //     lowest: value[0],
-  //     highest: value[1],
-  //   });
-  //   onAfterChange(value);
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('cdu prevState ', prevState);
+    console.log('cdu prevProps === this.props ', prevProps === this.props);
+    const now = Date.now();
+    console.log('cdu checkpoint', now - this.checkPointCDU);
+    this.checkPointCDU = now;
+  }
+  onChangeThrottled = _throttle(this.props.onChange, 500, { leading: false });
+  checkPoint = Date.now()
+  checkPointCDU = Date.now()
   handleChange = (value) => {
-    console.log('onchange value ', value);
-    const { onChange } = this.props;
+    const now = Date.now();
+    console.log('onchange value and time ', value, now - this.checkPoint);
+    this.checkPoint = now;
+
     this.setState({
       lowest: value[0],
       highest: value[1],
     });
-    onChange(value);
-  }
-  // TODO: try avoid creating of new array somehow, maybe use setState, 
-  // replace to componentWillReceiveProps
-  countRange = (lowest, highest, baseMin, baseMax) => {
-    let nextLowest = baseMin;
-    let nextHighest = baseMax;
-
-    if (lowest && lowest > baseMin && lowest < baseMax) {
-      nextLowest = lowest;
-    }
-    if (highest && highest > baseMin && highest < baseMax) {
-      nextHighest = highest;
-    }
-    return [nextLowest, nextHighest];
+    this.onChangeThrottled(value);
   }
   render() {
     const { baseRange: [baseMin, baseMax], step } = this.props;
     const { lowest, highest } = this.state;
-    const nextRange = this.countRange(lowest, highest, baseMin, baseMax);
+    const nextLowest = lowest || baseMin;
+    const nextHighest = highest || baseMax;
 
     return (
       <div style={{
@@ -86,16 +77,14 @@ class FilteringSlider extends PureComponent {
             {'Стоимость'}
           </header>
           <div>
-            {/* TODO: check if range is updated with PureComponent
-                reset slider local state on new baseRange props */}
             <span>
-              {nextRange[0]}
+              {nextLowest}
             </span>
             <span style={{ padding: '0 10px' }}>
               {' - '}
             </span>
             <span>
-              {nextRange[1]}
+              {nextHighest}
             </span>
           </div>
         </div>
@@ -103,11 +92,10 @@ class FilteringSlider extends PureComponent {
           defaultValue={[baseMin, baseMax]}
           max={baseMax}
           min={baseMin}
-          // onAfterChange={this.handleAfterChange}
           onChange={this.handleChange}
           range
           step={step}
-          value={nextRange}
+          value={[nextLowest, nextHighest]}
         />
       </div>
     );
