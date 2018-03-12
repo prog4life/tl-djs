@@ -70,6 +70,7 @@ class StudiosFilterForm extends Component {
               placeholder="Умный поиск!"
             />)
           }
+          {/* TODO: add placeholder for tags absence case */}
           <TagList onClose={this.handleTagClose} tags={tags} />
         </FormItem>
         <FilteringSlider

@@ -10,6 +10,8 @@ class FilteringSlider extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     console.log('is props the same: ', this.props === nextProps);
+    console.log('is baseRange the same: ', this.props.baseRange
+      === nextProps.baseRange);
 
     if (this.props === nextProps) {
       return;

@@ -101,17 +101,13 @@ const filterReducer = (state = defaultState, action) => {
 
 export default filterReducer;
 
-export const getLowestPrice = state => state.filter.minPrice;
-export const getHighestPrice = state => state.filter.maxPrice;
-
 export const getSearchText = state => state.searchText;
 
 export const getAllTags = state => state.tags;
 
 export const getBaseRange = state => state.baseRange;
 
-// export const getBaseMin = state => state.baseRange[0];
-// export const getBaseMax = state => state.baseRange[1];
+export const getSelectedRange = state => state.selectedRange;
 
 export function getFilteringParams(state) {
   const { searchText, tags, selectedRange } = state;

@@ -107,7 +107,10 @@ export default studiosReducer;
 
 export const getAll = state => Object.values(state.studiosByIds);
 
-// TODO: get ids of sorted
+export const getAllByIds = state => state.studiosByIds;
+
+export const getSortedByPrice = state => state.sortedByPrice;
+
 export const getIds = state => Object.keys(state.studiosByIds);
 
 export const getIsLoading = state => state.isLoading;

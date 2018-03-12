@@ -23,6 +23,7 @@
     "fast-async": "^6.3.1",
     "lodash.intersection": "^4.4.0",
     "lodash.throttle": "^4.1.1",
+    "lodash.union": "^4.6.0",
     "normalize.css": "^8.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
