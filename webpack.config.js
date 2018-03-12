@@ -12,262 +12,255 @@ const autoprefixer = require('autoprefixer');
 const scssSyntax = require('postcss-scss');
 // const cssnano = require('cssnano');
 
-// module.exports = (env = process.env.NODE_ENV || 'development') => {
-module.exports = (env = process.env.NODE_ENV) => {
-  const isProduction = env === 'production';
+// const env = process.env.NODE_ENV;
+const env = process.env.NODE_ENV || 'development';
+const isProd = env === 'production';
 
-  console.log('env === "development" ', env === 'development');
-  console.log('isProduction (env === "production") ', isProduction);
-  console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
+console.log('env === "development" ', env === 'development');
+console.log('isProduction (env === "production") ', isProd);
+console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
-  return {
-    entry: {
-      polyfills: './src/config/polyfills.js',
-      bundle: [
-        // './src/config/polyfills.js',
-        // 'babel-polyfill',
-        // 'normalize.css/normalize.css',
-        // './src/styles/index.scss',
-        './src/index.jsx',
-      ],
-    },
-    output: {
-      filename: isProduction ? '[name].[chunkhash].js' : '[name].[id].js',
-      chunkFilename: isProduction ? '[name].[chunkhash].js' : '[id].[name].js',
-      path: path.resolve(__dirname, 'public'),
-      publicPath: '/',
-    },
-    plugins: [
-      new ExtractTextPlugin({
-        filename: isProduction ? 'styles.[contenthash].css' : 'styles.[id].css',
-        allChunks: true,
-        disable: !isProduction, // OR: env === 'development'
-      }),
-      // new UglifyJsPlugin({
-      //   sourceMap: true,
-      //   parallel: true, // default === os.cpus().length -1
-      // }),
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify(env),
-        },
-      }),
-      new CleanWebpackPlugin(
-        ['public'], // OR: 'dist', removes folder
-        { exclude: ['index.html', 'studios.json'] },
-      ),
-      new HTMLWebpackPlugin({
-        title: 'TL App for DJS testcase',
-        favicon: path.resolve(__dirname, 'src/assets/favicon-32x32.png'),
-        inject: false,
-        template: path.resolve(__dirname, 'src/assets/template-index.html'),
-        chunksSortMode(a, b) {
-          const order = ['polyfills', 'antd', 'vendors', 'bundle'];
-          return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-        },
-        appMountId: 'app',
-        mobile: true,
-        // excludeChunks: ['common']
-        // filename: 'assets/custom.html'
-        // hash: true // usefull for cache busting
-      }),
-      // new CompressionPlugin({
-      //   deleteOriginalAssets: true,
-      //   test: /\.js/
-      // }),
-      ...isProduction ? [new webpack.HashedModuleIdsPlugin()] : [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-      ],
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendors',
-        chunks: ['bundle'],
-        minChunks(module) { // 1st arg: 'module', 2nd: count
-          // This prevents stylesheet resources with the .css or .scss extension
-          // from being moved from their original chunk to the vendor chunk
-          if (module.resource && (/^.*\.(css|scss)$/).test(module.resource)) {
-            return false;
-          } // eslint-disable-next-line
-          return module.context && module.context.includes('node_modules');
-        },
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: ['antd'],
-        chunks: ['vendors'],
-        minChunks: ({ resource }) => resource && (/antd/).test(resource),
-      }),
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'commons',
-      //   minChunks: 2
-      // }),
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'manifest'
-      //   // minChunks: Infinity
-      // }),
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        openAnalyzer: false,
-      }),
-      new VisualizerPlugin(),
-      new DuplPkgCheckrPlugin(),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+module.exports = {
+  entry: {
+    polyfills: './src/config/polyfills.js',
+    bundle: [
+      // './src/config/polyfills.js',
+      // 'babel-polyfill',
+      // 'normalize.css/normalize.css',
+      // './src/styles/index.scss',
+      './src/index.jsx',
     ],
-    resolve: {
-      alias: {
-        App: path.resolve(__dirname, 'src/components/App.jsx'),
-        Components: path.resolve(__dirname, 'src/components'),
-        Utilities: path.resolve(__dirname, 'src/utils'),
+  },
+  output: {
+    filename: isProd ? 'js/[name].[chunkhash].js' : '[name].[id].js',
+    chunkFilename: isProd ? 'js/[name].[chunkhash].js' : '[id].[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
+  },
+  plugins: [
+    new ExtractTextPlugin({
+      filename: 'css/styles.[contenthash].css',
+      allChunks: true,
+      disable: env === 'development', // OR: !isProd
+    }),
+    // new UglifyJsPlugin({
+    //   sourceMap: true,
+    //   parallel: true, // default === os.cpus().length -1
+    // }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(env),
       },
-      modules: [
-        // path.resolve(__dirname, 'src/components'),
-        path.resolve(__dirname, 'src'),
-        'node_modules',
-      ],
-      extensions: ['.js', '.json', '.jsx', '.less', '*'],
+    }),
+    new CleanWebpackPlugin(
+      ['dist'], // OR: 'dist', removes folder
+      { exclude: ['index.html'] }, // TEMP
+    ),
+    new HTMLWebpackPlugin({
+      title: 'TL App for DJS testcase',
+      // favicon: path.resolve(__dirname, 'src/assets/favicon-32x32.png'),
+      favicon: './src/assets/favicon-32x32.png',
+      inject: false,
+      template: path.resolve(__dirname, 'src/assets/template-index.html'),
+      chunksSortMode(a, b) {
+        const order = ['polyfills', 'antd', 'vendors', 'bundle'];
+        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
+      },
+      appMountId: 'app',
+      mobile: true,
+      // minify: false,
+      // excludeChunks: ['common']
+      // filename: 'assets/custom.html'
+      // hash: true // usefull for cache busting
+    }),
+    // new CompressionPlugin({
+    //   deleteOriginalAssets: true,
+    //   test: /\.js/
+    // }),
+    ...isProd ? [new webpack.HashedModuleIdsPlugin()] : [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin(),
+    ],
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendors',
+      chunks: ['bundle'],
+      minChunks(module) { // 1st arg: 'module', 2nd: count
+        // This prevents stylesheet resources with the .css or .scss extension
+        // from being moved from their original chunk to the vendor chunk
+        if (module.resource && (/^.*\.(css|scss)$/).test(module.resource)) {
+          return false;
+        } // eslint-disable-next-line
+        return module.context && module.context.includes('node_modules');
+      },
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: ['antd'],
+      chunks: ['vendors'],
+      minChunks: ({ resource }) => resource && (/antd/).test(resource),
+    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'commons',
+    //   minChunks: 2
+    // }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'manifest'
+    //   // minChunks: Infinity
+    // }),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    }),
+    new VisualizerPlugin(),
+    new DuplPkgCheckrPlugin(),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+  ],
+  resolve: {
+    alias: {
+      App: path.resolve(__dirname, 'src/components/App.jsx'),
+      // components: path.resolve(__dirname, 'src/components'),
+      // utils: path.resolve(__dirname, 'src/utils'),
     },
-    module: {
-      rules: [
-        {
-          test: /\.(js|jsx)$/,
-          loader: 'babel-loader',
-          include: [
-            path.resolve(__dirname, 'src')
+    modules: [
+      path.resolve(__dirname, 'src'),
+      // path.resolve(__dirname, 'src/components'),
+      'node_modules',
+    ],
+    extensions: ['.js', '.json', '.jsx', '.less', '*'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'babel-loader',
+        include: [path.resolve(__dirname, 'src')],
+        exclude: [path.resolve(__dirname, 'node_modules')],
+        options: {
+          plugins: [
+            'react-hot-loader/babel',
+            'fast-async',
+            'transform-class-properties',
+            ['import', {
+              libraryName: 'antd',
+              libraryDirectory: 'es',
+              style: true, // true OR 'css'(without optimization)
+            }],
           ],
-          exclude: [
-            path.resolve(__dirname, 'node_modules'),
+          presets: [
+            ['env', {
+              modules: false,
+              useBuiltIns: 'usage',
+              // useBuiltIns: 'entry',
+              // useBuiltIns: false,
+              debug: true,
+              targets: {
+                browsers: ['last 2 versions'],
+              },
+              exclude: [
+                'transform-regenerator',
+                'transform-async-to-generator',
+              ]
+            }],
+            'react',
+            'stage-3',
           ],
-          options: {
-            plugins: [
-              'react-hot-loader/babel',
-              'fast-async',
-              'transform-class-properties',
-              ['import', {
-                libraryName: 'antd',
-                libraryDirectory: 'es',
-                style: true, // true OR 'css'(without optimization)
-              }],
-            ],
-            presets: [
-              ['env', {
-                modules: false,
-                useBuiltIns: 'usage',
-                // useBuiltIns: 'entry',
-                // useBuiltIns: false,
-                debug: true,
-                targets: {
-                  browsers: ['last 2 versions'],
-                },
-                exclude: [
-                  'transform-regenerator',
-                  'transform-async-to-generator',
-                ]
-              }],
-              'react',
-              'stage-3',
-            ],
-          },
         },
-        {
-          test: /\.(scss|css)$/,
-          include: [
-            path.resolve(__dirname, 'src'),
-            path.resolve(__dirname, 'node_modules'),
-          ],
-          use: ExtractTextPlugin.extract({
-            use: [
-              {
-                loader: 'css-loader',
-                options: {
-                  importLoaders: 3,
-                  // url: false, // enable/disable url() resolution
-                  // minimize: true, // OR cssnano config object
-                  sourceMap: true,
-                }
-              },
-              {
-                loader: 'postcss-loader',
-                options: {
-                  ident: 'postcss',
-                  syntax: scssSyntax,
-                  plugins: [
-                    autoprefixer,
-                    // cssnano // with def config it brokes antd spinner
-                  ],
-                  sourceMap: true,
-                }
-              },
-              // 'resolve-url-loader',
-              { loader: 'sass-loader', options: { sourceMap: true } },
-            ],
-            fallback: 'style-loader',
-          }),
-        },
-        {
-          test: /\.less$/,
-          use: ExtractTextPlugin.extract({
-            use: [
-              {
-                loader: 'css-loader',
-                options: { importLoaders: 2, sourceMap: true },
-              },
-              // {
-              //   loader: 'postcss-loader',
-              //   options: {
-              //     ident: 'postcss',
-              //     plugins: [autoprefixer],
-              //     sourceMap: true
-              //   }
-              // },
-              {
-                loader: 'less-loader',
-                options: { javascriptEnabled: true, sourceMap: true },
-              },
-            ],
-            fallback: 'style-loader',
-          }),
-        },
-        {
-          test: /\.(png|jpe?g|gif|svg)$/,
-          include: path.resolve(__dirname, 'src'),
+      },
+      {
+        test: /\.(scss|css)$/,
+        include: [
+          path.resolve(__dirname, 'src/styles'),
+          path.resolve(__dirname, 'src/components'),
+          path.resolve(__dirname, 'node_modules'),
+        ],
+        use: ExtractTextPlugin.extract({
           use: [
             {
-              loader: 'file-loader',
+              loader: 'css-loader',
+              options: { importLoaders: 3, sourceMap: true }
+            },
+            {
+              loader: 'postcss-loader',
               options: {
-                name: '[name].[ext]', // '[name].[hash].[ext]'
-                outputPath: 'assets/img/', // custom output path
-              },
+                ident: 'postcss',
+                syntax: scssSyntax,
+                plugins: [
+                  autoprefixer,
+                ],
+                sourceMap: true,
+              }
+            },
+            // 'resolve-url-loader',
+            { loader: 'sass-loader', options: { sourceMap: true } },
+          ],
+          fallback: 'style-loader',
+        }),
+      },
+      {
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          use: [
+            {
+              loader: 'css-loader',
+              options: { importLoaders: 2, sourceMap: true },
             },
             // {
-            //   loader: 'image-webpack-loader',
-            //   query: {
-            //     progressive: true,
-            //     optimizationLevel: 7,
-            //     interlaced: false,
-            //     pngquant: {
-            //       quality: '65-90',
-            //       speed: 4
-            //     }
+            //   loader: 'postcss-loader',
+            //   options: {
+            //     ident: 'postcss',
+            //     plugins: [autoprefixer],
+            //     sourceMap: true
             //   }
-            // }
+            // },
+            {
+              loader: 'less-loader',
+              options: { javascriptEnabled: true, sourceMap: true },
+            },
           ],
-        },
-        // {
-        //   test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
-        //   loader: 'url-loader',
-        //   options: {
-        //     limit: 10000
-        //   }
-        // }
-      ],
-    },
-    devServer: {
-      progress: true,
-      contentBase: path.resolve(__dirname, 'public'),
-      compress: true,
-      historyApiFallback: true,
-      hot: true,
-      // port: 9000,
-    },
-    devtool: isProduction ? 'source-map' : 'eval-source-map',
-  };
+          fallback: 'style-loader',
+        }),
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/,
+        include: path.resolve(__dirname, 'src'),
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: isProd ? '[name].[hash].[ext]' : '[name].[ext]',
+              // outputPath: 'assets/', // custom output path,
+              useRelativePath: true, // isProd
+            },
+          },
+          // {
+          //   loader: 'image-webpack-loader',
+          //   query: {
+          //     progressive: true,
+          //     optimizationLevel: 7,
+          //     interlaced: false,
+          //     pngquant: {
+          //       quality: '65-90',
+          //       speed: 4
+          //     }
+          //   }
+          // }
+        ],
+      },
+      // {
+      //   test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
+      //   loader: 'url-loader',
+      //   options: {
+      //     limit: 10000
+      //   }
+      // }
+    ],
+  },
+  devServer: {
+    progress: true,
+    contentBase: path.resolve(__dirname, 'dist'),
+    compress: true,
+    historyApiFallback: true,
+    hot: true,
+    // port: 9000,
+  },
+  devtool: isProd ? 'source-map' : 'eval-source-map',
 };

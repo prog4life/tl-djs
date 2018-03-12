@@ -10,7 +10,7 @@ const LOAD_STUDIOS = 'LOAD_STUDIOS';
 
 const defaultState = {
   searchText: '',
-  tags: ['bird', 'hitech', 'glass'],
+  tags: ['Картина'],
   baseRange: [0, 10000],
   selectedRange: [],
 };
@@ -54,6 +54,8 @@ export const baseRange = (state, action) => {
     const lowest = first && first.price;
     const highest = last && last.price;
     // TODO: test with 1000 and 1000
+
+    // TODO: return prev state if values are the same ?
 
     if (lowest && highest && lowest !== highest) {
       return [lowest, highest];
@@ -107,6 +109,9 @@ export const getSearchText = state => state.searchText;
 export const getAllTags = state => state.tags;
 
 export const getBaseRange = state => state.baseRange;
+
+// export const getBaseMin = state => state.baseRange[0];
+// export const getBaseMax = state => state.baseRange[1];
 
 export function getFilteringParams(state) {
   const { searchText, tags, selectedRange } = state;

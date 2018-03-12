@@ -8,6 +8,7 @@ import {
   SET_FILTER_RANGE,
 } from 'constants/actionTypes';
 import transformArrayToObj from 'utils/handleResponse';
+import { getIsLoading } from 'reducers';
 
 // TEMP
 const LOAD_STUDIOS = 'LOAD_STUDIOS';
@@ -54,16 +55,18 @@ export const setFilterRange = (min, max) => ({
 // });
 
 export const loadStudios = () => (dispatch, getState) => {
-  // if (getIsLoading(getState())) { // had 2nd arg "filter" passed in Dans example
-  if (getState().studios.isLoading) { // had 2nd arg "filter" passed in Dans example
+  if (getIsLoading(getState())) { // had 2nd arg "filter" passed in Dans example
     return; // Optionally return Promise.resolve()
   }
   const url = 'http://localhost:8585/studios';
   const promise = fetch(url, { mode: 'cors' })
-    .then(res => (res.ok ? res.json() : Promise.reject(res.statusText)))
-    .then(response => response.sort((s1, s2) => s1.price - s2.price));
+    .then(res => (
+      res.ok ? res.json() : Promise.reject(res.statusText)
+    ))
+    .then(response =>
+      response.sort((s1, s2) => s1.price - s2.price));
   dispatch({ type: LOAD_STUDIOS, payload: promise });
-  // return promise;
+  // return promise; // optioanl
 };
 
 // TODO: display error message for the user

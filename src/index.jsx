@@ -9,7 +9,7 @@ import { loadState, saveState } from 'utils/localStorage';
 import 'normalize.css/normalize.css';
 import 'styles/index.scss';
 
-import 'assets/favicon-32x32.png';
+// import 'assets/favicon-32x32.png';
 
 const initialState = {};
 const persistedState = loadState('app-state') || {};

@@ -46,15 +46,15 @@ class StudiosFilterForm extends Component {
     const { addFilterTag, setFilterText, form } = this.props;
     // console.log('search value: ', val);
     addFilterTag(val);
-    setFilterText('');
+    // setFilterText(''); // need to call if "handleSearchChange" is used
     form.setFieldsValue({ search: '' }); // OR: form.resetFields('search');
   }
-  handleSearchChange = (e) => {
-    // const { setFilterText } = this.props;
-    // NOTE: form.getFieldValue('search') returns prev value here
-    console.log('on search change e.target.value: ', e.target.value);
-    this.setFilterTextThrottled(e.target.value);
-  }
+  // handleSearchChange = (e) => {
+  //   // const { setFilterText } = this.props;
+  //   // NOTE: form.getFieldValue('search') returns prev value here
+  //   console.log('on search change e.target.value: ', e.target.value);
+  //   this.setFilterTextThrottled(e.target.value);
+  // }
   handleSubmit = (e) => {
     e.preventDefault();
   }

@@ -6,7 +6,7 @@ const { studios } = require('./studios');
 
 const app = express();
 const port = process.env.PORT || 8585;
-const publicPath = path.join(__dirname, 'public');
+const publicPath = path.join(__dirname, 'dist');
 
 app.set('port', port);
 
