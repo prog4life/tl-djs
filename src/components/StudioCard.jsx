@@ -11,14 +11,19 @@ const StudioCard = ({ id, name, price, view: [imgSrc] }) => (
     cover={<img alt={`Студия ${name || ''}`} src={imgSrc} height="260" />}
     // extra={CardExtra}
     hoverable
-    // style={{ width: 382 }}
+    style={{ maxWidth: 382, marginBottom: '16px' }}
   >
     {/* <div style={{ position: 'relative' }}> */}
     <div style={{
         position: 'absolute',
         background: '#2f65eb',
         borderRadius: '3px 0 0 3px',
-        width: '23%',
+        lineHeight: '24px',
+        minHeight: '24px',
+        maxHeight: '24px',
+        minWidth: '23%',
+        padding: '0 5px',
+        top: '12.5%',
         right: 0,
         bottom: '80%',
         textAlign: 'center',

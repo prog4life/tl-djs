@@ -116,12 +116,15 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      App: path.resolve(__dirname, 'src/components/App.jsx'),
-      // components: path.resolve(__dirname, 'src/components'),
-      // utils: path.resolve(__dirname, 'src/utils'),
+      components: path.resolve(__dirname, 'src/components'),
+      containers: path.resolve(__dirname, 'src/containers'),
+      reducers: path.resolve(__dirname, 'src/reducers'),
+      actions: path.resolve(__dirname, 'src/actions'),
+      constants: path.resolve(__dirname, 'src/constants'),
+      utils: path.resolve(__dirname, 'src/utils'),
     },
     modules: [
-      path.resolve(__dirname, 'src'),
+      // path.resolve(__dirname, 'src'),
       // path.resolve(__dirname, 'src/components'),
       'node_modules',
     ],
@@ -151,7 +154,7 @@ module.exports = {
               useBuiltIns: 'usage',
               // useBuiltIns: 'entry',
               // useBuiltIns: false,
-              debug: true,
+              debug: false,
               targets: {
                 browsers: ['last 2 versions'],
               },
