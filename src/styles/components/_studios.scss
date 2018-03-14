@@ -1,3 +1,41 @@
 .studios {
-  padding-top: 4.5rem;
+  // padding-top: 4.5rem;
+  // margin: 0 auto;
+  max-width: 382px;
+}
+
+.studios-layout {
+  align-items: center;
+  padding-top: 36px;
+}
+
+// @media (min-width: 768px) {
+//   .studios {
+//     max-width: 382px;
+//   }
+// }
+
+@media (min-width: 992px) {
+  .studios {
+    // max-width: 812px;
+    max-width: 788px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .studios {
+    // margin: 0;
+    // margin-left: auto;
+    // max-width: 812px;
+  }
+
+  .studios-layout {
+    align-items: flex-end;
+  }
+}
+
+@media (min-width: 1600px) {
+  .studios {
+    max-width: 1194px;
+  }
 }
