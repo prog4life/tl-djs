@@ -1,0 +1,36 @@
+html {
+  // box-sizing: border-box;
+  // font-size: 62.5%;
+}
+
+body {
+  // margin: 0;
+  // background-color: #fafafa; // from Material UI
+  // font-family: 'Roboto', 'Helvetica', 'Verdana', sans-serif;
+  // font-family: 'Roboto', sans-serif;
+  // font-size: 1.6rem;
+  // min-height: 100vh;
+  // height: 100%; // at Yandex site
+}
+
+// from Google Fonts site:
+html,
+body {
+  min-height: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  // box-sizing: border-box; // OR
+  // box-sizing: inherit; // if it was set for html
+}
+
+@media print {
+  body {
+    background-color: #fff;
+  }
+}

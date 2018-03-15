@@ -25,9 +25,9 @@ module.exports = {
     polyfills: './src/config/polyfills.js',
     bundle: [
       // './src/config/polyfills.js',
-      // 'babel-polyfill',
       // 'normalize.css/normalize.css',
-      // './src/styles/index.scss',
+      'sanitize.css/sanitize.css',
+      './src/styles/index.scss',
       './src/index.jsx',
     ],
   },

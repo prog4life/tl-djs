@@ -1,7 +1,7 @@
 .studios {
   // padding-top: 4.5rem;
   // margin: 0 auto;
-  max-width: 382px;
+  max-width: $studio-card-width;
 }
 
 .studios-layout {
@@ -15,14 +15,14 @@
 //   }
 // }
 
-@media (min-width: 992px) {
+@media (min-width: $lg) {
   .studios {
     // max-width: 812px;
-    max-width: 788px;
+    max-width: $studio-card-width * 2 + $gutter-lg; // 788px
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: $xl) {
   .studios {
     // margin: 0;
     // margin-left: auto;
@@ -34,7 +34,7 @@
   }
 }
 
-@media (min-width: 1600px) {
+@media (min-width: $xxl) {
   .studios {
     max-width: 1194px;
   }

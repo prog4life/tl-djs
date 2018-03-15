@@ -5,46 +5,31 @@ import { Card } from 'antd';
 
 const { Meta } = Card;
 
-const StudioCard = ({ id, name, price, view: [imgSrc] }) => (
-  <Card
-    className="studio-card"
-    cover={<img alt={`Студия ${name || ''}`} src={imgSrc} height="260" />}
-    // extra={CardExtra}
-    hoverable
-  >
-    {/* <div style={{ position: 'relative' }}> */}
-    <div style={{
-        position: 'absolute',
-        background: '#2f65eb',
-        borderRadius: '3px 0 0 3px',
-        lineHeight: '24px',
-        minHeight: '24px',
-        maxHeight: '24px',
-        minWidth: '23%',
-        padding: '0 5px',
-        top: '12.5%',
-        right: 0,
-        bottom: '80%',
-        textAlign: 'center',
-        color: 'white'
-      }}
+const StudioCard = ({ name, price, view: [imgSrc] }) => (
+  <div className="studio-card">
+    <Card
+      cover={<img
+        className="studio-card__cover"
+        alt={`Студия ${name || ''}`}
+        src={imgSrc}
+      />}
+      hoverable
     >
-      {`${price} р.`}
-    </div>
-    {/* </div> */}
-    <Meta
-      title={`Студия ${name || ''}`}
-      // description="www.whatever.com"
-    />
-  </Card>
+      <div className="price-label">
+        {`${price} р.`}
+      </div>
+      <Meta
+        title={name || ''}
+        // description="www.whatever.com"
+      />
+    </Card>
+  </div>
 );
 
 StudioCard.propTypes = {
-  extra: PropTypes.element.isRequired,
-  id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  view: PropTypes.arrayOf(PropTypes.string).isRequired
+  view: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default StudioCard;

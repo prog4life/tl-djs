@@ -48,8 +48,8 @@
     "react/require-optimization": 0,
     "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
     "react/jsx-max-depth": [0, { "max": 2 }],
-    "react/jsx-no-literals": "warn",
-    "react/jsx-sort-props": "warn",
+    "react/jsx-no-literals": ["warn", { "noStrings": false }],
+    "react/jsx-sort-props": ["warn", { "noSortAlphabetically": true }],
     "react/no-set-state": "warn",
     "jsx-a11y/anchor-is-valid": [ "error", {
       "components": [ "Link" ],
