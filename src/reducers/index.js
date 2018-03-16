@@ -21,11 +21,13 @@ export default combineReducers({
 
 export const getIsLoading = state => fromStudios.getIsLoading(state.studios);
 
-const getFilterParams = state => getFilteringParams(state.filter);
+// const getFilterParams = state => getFilteringParams(state.filter);
 
 const getListOfAllStudios = state => fromStudios.getAll(state.studios);
 const getAllStudiosByIds = state => fromStudios.getAllByIds(state.studios);
-const getSortedByPrice = ({ studios }) => fromStudios.getSortedByPrice(studios);
+
+export const getSortedByPrice = ({ studios }) =>
+  fromStudios.getSortedByPrice(studios);
 
 const getBaseMin = state => getBaseRange(state.filter)[0];
 const getBaseMax = state => getBaseRange(state.filter)[1];

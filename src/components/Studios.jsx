@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // import { Field, reduxForm } from 'redux-form'
 import { Layout, Row, Col, Spin } from 'antd';
 import StudioCard from 'components/StudioCard';
+import ReloadControl from 'components/ReloadControl';
 
 const { Content } = Layout;
 
@@ -25,21 +26,13 @@ class Studios extends Component {
     textAlign: 'center',
     width: '1.6em',
   }
-  renderPlaceholder = isLoading => (
-    isLoading
-      ? <Spin size="large" tip="Loading..." />
-      : (
-        <Fragment>
-          <p style={this.placeholderStyle}>
-            {':Þ'}
-          </p>
-          {/* <span style={{ color: 'darkgrey' }}>
-            {`Loading: ${isLoading}`}
-          </span> */}
-        </Fragment>
-      )
+  renderReloadControl = () => (
+    <ReloadControl onReloadClick={this.handleLoadClick}>
+      {':Þ Lo\u0026ad again'}
+    </ReloadControl>
   )
   renderStudios = studios => (
+    // TODO: try align-self OR flex-shrink: 1
     <div className="studios">
       <Row
         gutter={{ xs: 16, sm: 16, md: 16, lg: 24 }}
@@ -81,33 +74,13 @@ class Studios extends Component {
       isLoading,
     } = this.props;
 
+    if (isLoading) {
+      return <Spin size="large" tip="Loading..." />;
+    }
     return (
-      <Fragment>
-        <button
-          onClick={this.handleLoadClick}
-          style={{
-            margin: '0 10px',
-            height: '10px',
-            width: '20px',
-            position: 'absolute',
-            top: '5px',
-            right: '10px',
-          }}
-          type="button"
-        >
-          {'LOAD'}
-        </button>
-        {isLoading || !studios.length
-          ?
-            <Layout>
-              {this.renderPlaceholder(isLoading)}
-            </Layout>
-          :
-            <Layout className="studios-layout">
-              {this.renderStudios(studios)}
-            </Layout>
-        }
-      </Fragment>
+      !studios.length
+        ? this.renderReloadControl()
+        : this.renderStudios(studios)
     );
   }
 }
