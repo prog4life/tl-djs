@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import App from 'containers/App';
 
 // import 'normalize.css/normalize.css';
-import './styles/index.scss';
+// import './styles/index.scss';
 
 import configureStore from './store/configureStore';
 

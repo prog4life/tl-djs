@@ -62,14 +62,7 @@ class FilteringSlider extends PureComponent {
     const nextHighest = highest || baseMax;
 
     return (
-      <div style={{
-        backgroundColor: '#fff',
-        border: '1px solid #e8e8e8',
-        borderRadius: 2,
-        borderColor: 'rgba(0, 0, 0, 0.09)',
-        padding: 16,
-      }}
-      >
+      <div className="filtering-slider">
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',

@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -8,6 +8,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const VisualizerPlugin = require('webpack-visualizer-plugin');
 const DuplPkgCheckrPlugin = require('duplicate-package-checker-webpack-plugin');
 // const CompressionPlugin = require('compression-webpack-plugin');
+// const BabelPluginTransformImports = require('babel-plugin-transform-imports');
 const autoprefixer = require('autoprefixer');
 const scssSyntax = require('postcss-scss');
 // const cssnano = require('cssnano');
@@ -43,10 +44,6 @@ module.exports = {
       allChunks: true,
       disable: env === 'development', // OR: !isProd
     }),
-    // new UglifyJsPlugin({
-    //   sourceMap: true,
-    //   parallel: true, // default === os.cpus().length -1
-    // }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(env),
@@ -77,10 +74,22 @@ module.exports = {
     //   deleteOriginalAssets: true,
     //   test: /\.js/
     // }),
-    ...isProd ? [new webpack.HashedModuleIdsPlugin()] : [
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NamedModulesPlugin(),
-    ],
+    ...isProd
+      ? [
+        new webpack.HashedModuleIdsPlugin(),
+        new UglifyJSPlugin({
+          parallel: true, // default === os.cpus().length -1
+          sourceMap: true, // cheap-source-map don't work with this plugin
+          uglifyOptions: {
+            ecma: 8,
+            compress: { warnings: false },
+          },
+        }),
+      ]
+      : [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin(),
+      ],
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       chunks: ['bundle'],
@@ -179,7 +188,7 @@ module.exports = {
           use: [
             {
               loader: 'css-loader',
-              options: { importLoaders: 3, sourceMap: true }
+              options: { importLoaders: 3, sourceMap: true },
             },
             {
               loader: 'postcss-loader',

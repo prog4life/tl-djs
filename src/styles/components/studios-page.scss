@@ -1,0 +1,14 @@
+.studios-layout {
+  align-items: center;
+  padding-top: 36px;
+}
+
+.filter-layout {
+  align-items: center;
+}
+
+@media (min-width: $xl) {
+  .studios-layout {
+    align-items: flex-end;
+  }
+}

@@ -61,7 +61,7 @@ class StudiosFilterForm extends Component {
   render() {
     const { form: { getFieldDecorator }, tags, basePriceRange } = this.props;
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form className="studios-filter__form" onSubmit={this.handleSubmit}>
         <FormItem>
           {getFieldDecorator('search')(
             <Search

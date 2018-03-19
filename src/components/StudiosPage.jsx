@@ -14,7 +14,7 @@ const StudiosPage = () => (
     <Header style={{ color: 'grey' }}>
       {'Header Text'}
     </Header>
-    <Content style={{ backgroundColor: '#f1f3f6' }}>
+    <Layout> {/* style={{ backgroundColor: '#f1f3f6' }} */}
       <Row type="flex">
         {/* <Col xs={2} sm={4} md={0} lg={2} xl={2} xxl={2} /> */}
         <Col
@@ -22,8 +22,8 @@ const StudiosPage = () => (
           sm={24}
           md={24}
           lg={24}
-          xl={18}
-          xxl={{ span: 18 }}
+          xl={16}
+          xxl={18}
         >
           <Layout className="studios-layout">
             <StudiosContainer />
@@ -38,7 +38,7 @@ const StudiosPage = () => (
           </Layout>
         </Col>
       </Row>
-    </Content>
+    </Layout>
     {/* <Sider>
     </Sider> */}
   </Layout>
