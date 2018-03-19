@@ -13,7 +13,6 @@ const StudiosPage = () => (
   <Layout>
     <Header style={{ color: 'grey' }}>
       {'Header Text'}
-      <TestControlsContainer />
     </Header>
     <Layout> {/* style={{ backgroundColor: '#f1f3f6' }} */}
       <Row type="flex">
@@ -40,11 +39,7 @@ const StudiosPage = () => (
         >
           <Layout className="filter-layout">
             <StudiosFilterContainer />
-            {/* <Row
-              style={{ alignSelf: 'stretch' }}
-            > */}
-              {/* <TestControlsContainer /> */}
-            {/* </Row> */}
+            <TestControlsContainer />
           </Layout>
         </Col>
       </Row>
