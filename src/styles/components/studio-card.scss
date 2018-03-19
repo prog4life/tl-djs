@@ -24,7 +24,7 @@
   color: white;
 }
 
-@media (min-width: 992px) {
+@media (min-width: $lg) {
   .studio-card {
     margin-bottom: $gutter-lg;
   }

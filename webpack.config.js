@@ -55,8 +55,8 @@ module.exports = {
     ),
     new HTMLWebpackPlugin({
       title: 'TL App for DJS testcase',
-      // favicon: path.resolve(__dirname, 'src/assets/favicon-32x32.png'),
-      favicon: './src/assets/favicon-32x32.png',
+      // favicon: path.resolve(__dirname, 'src/assets/favicon.png'),
+      favicon: './src/assets/favicon.png',
       inject: false,
       template: path.resolve(__dirname, 'src/assets/template-index.html'),
       chunksSortMode(a, b) {
@@ -82,7 +82,7 @@ module.exports = {
           sourceMap: true, // cheap-source-map don't work with this plugin
           uglifyOptions: {
             ecma: 8,
-            compress: { warnings: false },
+            // compress: { warnings: false },
           },
         }),
       ]

@@ -13,28 +13,38 @@ const StudiosPage = () => (
   <Layout>
     <Header style={{ color: 'grey' }}>
       {'Header Text'}
+      <TestControlsContainer />
     </Header>
     <Layout> {/* style={{ backgroundColor: '#f1f3f6' }} */}
       <Row type="flex">
         {/* <Col xs={2} sm={4} md={0} lg={2} xl={2} xxl={2} /> */}
         <Col
-          xs={24}
-          sm={24}
-          md={24}
-          lg={24}
-          xl={16}
-          xxl={18}
+          xs={{ span: 24, order: 2 }}
+          sm={{ span: 24, order: 2 }}
+          md={{ span: 24, order: 2 }}
+          lg={{ span: 24, order: 2 }}
+          xl={{ span: 16, order: 1 }}
+          xxl={{ span: 18, order: 1 }}
         >
           <Layout className="studios-layout">
             <StudiosContainer />
           </Layout>
         </Col>
-        <Col xs={24} sm={24} md={24} lg={24} xl={6} xxl={6}>
-          <Layout style={{ minHeight: '100%', padding: 32 }}>
+        <Col
+          xs={{ span: 24, order: 1 }}
+          sm={{ span: 24, order: 1 }}
+          md={{ span: 24, order: 1 }}
+          lg={{ span: 24, order: 1 }}
+          xl={{ span: 8, order: 2 }}
+          xxl={{ span: 6, order: 2 }}
+        >
+          <Layout className="filter-layout">
             <StudiosFilterContainer />
-            <Footer>
-              <TestControlsContainer />
-            </Footer>
+            {/* <Row
+              style={{ alignSelf: 'stretch' }}
+            > */}
+              {/* <TestControlsContainer /> */}
+            {/* </Row> */}
           </Layout>
         </Col>
       </Row>

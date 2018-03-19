@@ -28,14 +28,14 @@ class Studios extends Component {
   }
   renderReloadControl = () => (
     <ReloadControl onReloadClick={this.handleLoadClick}>
-      {':Þ Lo\u0026ad again'}
+      {':Þ Load again'}
     </ReloadControl>
   )
   renderStudios = studios => (
     // TODO: try align-self OR flex-shrink: 1
     <div className="studios">
       <Row
-        gutter={{ xs: 16, sm: 16, md: 16, lg: 24 }}
+        gutter={{ xs: 16, sm: 16, md: 16, lg: 20 }}
         justify="space-between"
         type="flex"
       >

@@ -112,8 +112,14 @@ export const getFilteredStudios = createSelector(
     let resultIds = filteredByPrice;
 
     if (filteredBySearchText && filteredByTags) {
-      const unitedIds = _union(filteredBySearchText, filteredByTags);
-      resultIds = _intersection(filteredByPrice, unitedIds);
+      console.log('filteredBySearchText: ', filteredBySearchText);
+      console.log('filteredByTags: ', filteredByTags);
+      const mergedUniqueIds = filteredByTags.reduce((acc, current) => (
+        acc.includes(current) ? acc : acc.concat(current)
+      ), filteredBySearchText);
+      console.log('mergedUniqueIds: ', mergedUniqueIds);
+      // const mergedUniqueIds = _union(filteredBySearchText, filteredByTags);
+      resultIds = _intersection(filteredByPrice, mergedUniqueIds);
     } else if (filteredBySearchText) {
       resultIds = _intersection(filteredByPrice, filteredBySearchText);
     } else if (filteredByTags) {

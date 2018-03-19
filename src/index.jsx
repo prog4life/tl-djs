@@ -9,7 +9,7 @@ import App from 'containers/App';
 
 import configureStore from './store/configureStore';
 
-// import 'assets/favicon-32x32.png';
+// import 'assets/favicon.png';
 
 const initialState = {};
 const store = configureStore(initialState);
