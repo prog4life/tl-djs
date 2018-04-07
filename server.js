@@ -55,9 +55,6 @@ app.get('*', (req, res, next) => { // consider app.all('*', ...)
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.listen(port, (err) => {
-  if (err) {
-    console.error(err);
-  }
+app.listen(port, () => {
   console.log(`Server is listening at ${port} port`);
 });

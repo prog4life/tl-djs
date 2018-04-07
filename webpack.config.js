@@ -1,14 +1,14 @@
 const webpack = require('webpack');
 const path = require('path');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const VisualizerPlugin = require('webpack-visualizer-plugin');
 const DuplPkgCheckrPlugin = require('duplicate-package-checker-webpack-plugin');
-// const CompressionPlugin = require('compression-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 // const BabelPluginTransformImports = require('babel-plugin-transform-imports');
+// const CompressionPlugin = require('compression-webpack-plugin');
+// const VisualizerPlugin = require('webpack-visualizer-plugin');
 const autoprefixer = require('autoprefixer');
 const scssSyntax = require('postcss-scss');
 // const cssnano = require('cssnano');
@@ -119,7 +119,7 @@ module.exports = {
       analyzerMode: 'static',
       openAnalyzer: false,
     }),
-    new VisualizerPlugin(),
+    // new VisualizerPlugin(),
     new DuplPkgCheckrPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
@@ -156,7 +156,15 @@ module.exports = {
               libraryDirectory: 'es',
               style: true, // true OR 'css'(without optimization)
             }],
-          ],
+            // [BabelPluginTransformImports, { // TODO: try "transform-imports"
+            //   'react-bootstrap': {
+            //     transform(importName) {
+            //       return `react-bootstrap/lib/${importName}`;
+            //     },
+            //     preventFullImport: true,
+            //   },
+            // }],
+          ].concat(isProd ? [] : ['transform-react-jsx-source']),
           presets: [
             ['env', {
               modules: false,
@@ -170,11 +178,15 @@ module.exports = {
               exclude: [
                 'transform-regenerator',
                 'transform-async-to-generator',
-              ]
+              ],
             }],
             'react',
             'stage-3',
           ],
+          // This is a feature of `babel-loader` for Webpack (not Babel itself).
+          // It enables caching results in ./node_modules/.cache/babel-loader/
+          // directory for faster rebuilds.
+          cacheDirectory: true,
         },
       },
       {
@@ -199,7 +211,7 @@ module.exports = {
                   autoprefixer,
                 ],
                 sourceMap: true,
-              }
+              },
             },
             // 'resolve-url-loader',
             { loader: 'sass-loader', options: { sourceMap: true } },

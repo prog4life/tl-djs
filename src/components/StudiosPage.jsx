@@ -6,7 +6,7 @@ import StudiosContainer from 'containers/StudiosContainer';
 import StudiosFilterContainer from 'containers/StudiosFilterContainer';
 import TestControlsContainer from 'containers/TestControlsContainer'; // TEMP
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 const StudiosPage = () => (
   // <Layout style={{ minHeight: '100vh' }} >
