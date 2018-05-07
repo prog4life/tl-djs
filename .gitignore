@@ -1,0 +1,26 @@
+# dependencies:
+node_modules/
+
+# production:
+build/
+public/
+dist/
+
+# src/assets/
+
+# config/
+**/.env
+
+# .eslintrc.json
+# .eslintignore
+
+# misc
+.DS_Store
+npm-debug.log
+yarn-error.log
+**/.idea/
+**/.vscode/
+TEMP/
+TMP/
+temp/
+tmp/

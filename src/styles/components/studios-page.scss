@@ -1,0 +1,36 @@
+.studios-layout {
+  align-items: center;
+}
+
+.filter-layout {
+  align-items: center;
+  min-height: 100%;
+  padding: $gutter-lg 0;
+}
+
+@media (min-width: $lg) {
+  .studios-layout {
+    // add 4px to compensate additional spacing that Form.Item added to
+    padding-top: $gutter-lg + 4px; // search input
+  }
+
+  .filter-layout {
+    padding: $gutter-lg 32px;
+  }
+}
+
+@media (min-width: $xl) {
+  .studios-layout {
+    align-items: flex-end;
+  }
+
+  .filter-layout {
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: $xxl) {
+  .filter-layout {
+    align-items: flex-end;
+  }
+}

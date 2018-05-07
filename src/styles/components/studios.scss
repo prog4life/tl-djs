@@ -1,0 +1,15 @@
+.studios {
+  max-width: $studio-card-width;
+}
+
+@media (min-width: $lg) {
+  .studios {
+    max-width: $studio-card-width * 2 + $gutter-lg; // 788px
+  }
+}
+
+@media (min-width: $xxl) {
+  .studios {
+    max-width: $studio-card-width * 3 + $gutter-lg * 2; // 1192px
+  }
+}

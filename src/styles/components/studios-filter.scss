@@ -1,0 +1,15 @@
+.studios-filter__form {
+  min-width: $studio-card-width;
+}
+
+@media (min-width: $lg) {
+  .studios-filter__form {
+    min-width: $studio-card-width * 2 + $gutter-lg;
+  }
+}
+
+@media (min-width: $xl) {
+  .studios-filter__form {
+    min-width: 340px;
+  }
+}
