@@ -38,7 +38,7 @@ module.exports = {
     filename: isProd ? 'js/[name].[chunkhash].js' : '[name].[id].js',
     chunkFilename: isProd ? 'js/[name].[chunkhash].js' : '[id].[name].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/fortest/',
+    publicPath: '/',
   },
   optimization: {
     minimizer: [ // setting this overrides webpack 4 defaults
@@ -94,7 +94,6 @@ module.exports = {
       // },
       appMountId: 'app',
       mobile: true,
-      // minify: false,
       // filename: 'assets/custom.html',
       // hash: true, // usefull for cache busting
     }),
@@ -172,9 +171,8 @@ module.exports = {
       },
       {
         test: /\.(scss|css)$/, // OR /\.s?[ac]ss$/,
-        // TODO: consider to remove include
         include: [
-          // path.resolve(__dirname, 'src/styles'),
+          path.resolve(__dirname, 'src/styles'),
           path.resolve(__dirname, 'src/components'),
           path.resolve(__dirname, 'node_modules'),
         ],

@@ -10,6 +10,8 @@ const { Search } = Input;
 
 // TODO: changeSearchTextDebounced = _debounce(this.handleSearchChange(e), 500);
 
+// TODO: use redux-form
+
 class StudiosFilterForm extends Component {
   static propTypes = {
     addFilterTag: PropTypes.func.isRequired,
