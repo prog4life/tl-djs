@@ -38,7 +38,7 @@ module.exports = {
     filename: isProd ? 'js/[name].[chunkhash].js' : '[name].[id].js',
     chunkFilename: isProd ? 'js/[name].[chunkhash].js' : '[id].[name].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    publicPath: '/fortest/',
   },
   optimization: {
     minimizer: [ // setting this overrides webpack 4 defaults
@@ -83,8 +83,11 @@ module.exports = {
       title: 'TL Studios',
       // favicon: path.resolve(__dirname, 'src/assets/favicon.png'),
       favicon: './src/assets/favicon.png',
+      // meta: {
+      //   viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
+      // },
       inject: false,
-      template: path.resolve(__dirname, 'src/assets/template-index.html'),
+      template: path.resolve(__dirname, 'src/assets/template.html'),
       // chunksSortMode(a, b) {
       //   const order = ['polyfills', 'vendors', 'bundle'];
       //   return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
@@ -92,9 +95,8 @@ module.exports = {
       appMountId: 'app',
       mobile: true,
       // minify: false,
-      // excludeChunks: ['common']
-      // filename: 'assets/custom.html'
-      // hash: true // usefull for cache busting
+      // filename: 'assets/custom.html',
+      // hash: true, // usefull for cache busting
     }),
     // new CompressionPlugin({
     //   deleteOriginalAssets: true,
@@ -172,7 +174,7 @@ module.exports = {
         test: /\.(scss|css)$/, // OR /\.s?[ac]ss$/,
         // TODO: consider to remove include
         include: [
-          path.resolve(__dirname, 'src/styles'),
+          // path.resolve(__dirname, 'src/styles'),
           path.resolve(__dirname, 'src/components'),
           path.resolve(__dirname, 'node_modules'),
         ],
@@ -188,7 +190,7 @@ module.exports = {
             options: {
               ident: 'postcss',
               // syntax: scssSyntax,
-              plugins: [autoprefixer], // cssnano
+              plugins: [autoprefixer],
               sourceMap: true,
             },
           },
@@ -206,7 +208,7 @@ module.exports = {
             options: {
               name: isProd ? '[name].[hash].[ext]' : '[name].[ext]',
               // outputPath: 'assets/', // custom output path,
-              useRelativePath: true, // isProd
+              useRelativePath: true, // TODO: switch to isProd
             },
           },
           // {
