@@ -17,6 +17,7 @@ const autoprefixer = require('autoprefixer');
 process.traceDeprecation = true; // or run process with --trace-deprecation flag
 
 const env = process.env.NODE_ENV || 'development';
+// const devMode = process.env.NODE_ENV !== 'production';
 const isProd = env === 'production';
 
 console.log('env: ', env);
@@ -30,13 +31,13 @@ module.exports = {
       // 'normalize.css/normalize.css',
       // 'sanitize.css/sanitize.css',
       // './src/styles/index.scss',
-      './src/config/polyfills.js',
+      // './src/config/polyfills.js',
       './src/index.jsx',
     ],
   },
   output: {
-    filename: isProd ? 'js/[name].[chunkhash].js' : '[name].[id].js',
-    chunkFilename: isProd ? 'js/[name].[chunkhash].js' : '[id].[name].js',
+    filename: isProd ? 'js/[name].[chunkhash:4].js' : '[name].[id].js',
+    chunkFilename: isProd ? 'js/[name].[chunkhash:4].js' : '[id].[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
@@ -51,30 +52,37 @@ module.exports = {
     ],
     splitChunks: {
       chunks: 'all',
+      cacheGroups: {
+        base: {
+          // test: /(react|react-dom|react-router|react-router-dom)/,
+          test(module, chunks) {
+            const name = module.nameForCondition && module.nameForCondition();
+            const re = /[\\/](react|react-dom|react-router|react-router-dom|history|core-js|whatwg-fetch|regenerator-runtime)[\\/]/;
+            const result = re.test(name);
+
+            // console.log(`module.nameForCondition: ${name}`);
+            // console.log(`RegExp .test() RESULT: ${result}`);
+
+            return result;
+          },
+        },
+        // to extract css to single file
+        // 'common-styles': {
+        //   name: 'styles',
+        //   test: /\.css$/,
+        //   chunks: 'all',
+        //   enforce: true,
+        // },
+      },
     },
-    // splitChunks: {
-    //   cacheGroups: {
-    //     styles: { // to extract css to one file
-    //       name: 'styles',
-    //       test: /\.css$/,
-    //       chunks: 'all',
-    //       enforce: true
-    //     }
-    //   }
-    // }
   },
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: isProd ? 'css/styles.[contenthash].css' : '[name].css',
-      chunkFilename: isProd ? 'css/[name].[contenthash].css' : '[id].css',
+      filename: isProd ? 'css/styles.[contenthash:4].css' : '[name].css',
+      chunkFilename: isProd ? 'css/[name].[contenthash:4].css' : '[id].css',
     }),
-    // new webpack.DefinePlugin({
-    //   'process.env': {
-    //     NODE_ENV: JSON.stringify(env),
-    //   },
-    // }),
     new CleanWebpackPlugin(
       ['dist'], // OR: 'build', removes folder
       { exclude: ['index.html'] }, // TEMP
@@ -83,9 +91,7 @@ module.exports = {
       title: 'TL Studios',
       // favicon: path.resolve(__dirname, 'src/assets/favicon.png'),
       favicon: './src/assets/favicon.png',
-      // meta: {
-      //   viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
-      // },
+      // meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
       inject: false,
       template: path.resolve(__dirname, 'src/assets/template.html'),
       // chunksSortMode(a, b) {
@@ -94,8 +100,6 @@ module.exports = {
       // },
       appMountId: 'app',
       mobile: true,
-      // filename: 'assets/custom.html',
-      // hash: true, // usefull for cache busting
     }),
     // new CompressionPlugin({
     //   deleteOriginalAssets: true,
@@ -103,6 +107,7 @@ module.exports = {
     // }),
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
+      // reportFilename: '../temp', // relative to output.path
       openAnalyzer: false,
     }),
     new DuplPkgCheckrPlugin(),
@@ -118,6 +123,10 @@ module.exports = {
       actions: path.resolve(__dirname, 'src/actions'),
       constants: path.resolve(__dirname, 'src/constants'),
       utils: path.resolve(__dirname, 'src/utils'),
+      selectors: path.resolve(__dirname, 'src/selectors'),
+      store: path.resolve(__dirname, 'src/store'),
+      styles: path.resolve(__dirname, 'src/styles'),
+      config: path.resolve(__dirname, 'src/config'),
     },
     modules: [
       // path.resolve(__dirname, 'src'),
@@ -128,47 +137,54 @@ module.exports = {
   },
   module: {
     rules: [
+      // -------------------- JS/JSX BABEL-LOADER -----------------------------
       {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         include: [path.resolve(__dirname, 'src')],
         exclude: [path.resolve(__dirname, 'node_modules')],
         options: {
+          // ------------------------ BABEL PLUGINS ---------------------------
           plugins: [
             'react-hot-loader/babel',
             // 'fast-async',
             'syntax-dynamic-import',
             'transform-class-properties',
+            // 'transform-flow-strip-types',
             // [BabelPluginTransformImports, { // TODO: try "transform-imports"
-            //   'react-bootstrap': {
+            //   'reactstrap': {
             //     transform(importName) {
-            //       return `react-bootstrap/lib/${importName}`;
+            //       return `reactstrap/lib/${importName}`;
             //     },
             //     preventFullImport: true,
             //   },
             // }],
           ].concat(isProd ? [] : ['transform-react-jsx-source']),
+          // ------------------------ BABEL PRESETS ---------------------------
           presets: [
             ['env', {
+              // need to be turned on for Jest testing
+              // modules: env === 'development' ? false : 'commonjs',
               modules: false,
-              useBuiltIns: 'usage',
-              // useBuiltIns: 'entry',
-              // useBuiltIns: false,
+              useBuiltIns: 'usage', // or 'entry' or false
               debug: true,
-              targets: {
-                browsers: ['last 2 versions'],
+              targets: { // ['defaults', 'firefox 52', 'not ie <= 11']
+                browsers: ['last 2 versions'], // ['not android <= 62']
               },
               exclude: [
-                'transform-regenerator',
-                'transform-async-to-generator',
+                'web.timers', // needed only for IE9-
+                // 'transform-regenerator',
+                // 'transform-async-to-generator',
               ],
             }],
+            // 'flow',
             'react',
             'stage-3',
           ],
           cacheDirectory: true,
         },
       },
+      // --------------------- CSS/SCSS LOADERS -------------------------------
       {
         test: /\.(scss|css)$/, // OR /\.s?[ac]ss$/,
         include: [
@@ -201,10 +217,11 @@ module.exports = {
         // TODO: consider to remove include
         include: path.resolve(__dirname, 'src'),
         use: [
+          // --------------------- FILE-LOADER --------------------------------
           {
             loader: 'file-loader',
             options: {
-              name: isProd ? '[name].[hash].[ext]' : '[name].[ext]',
+              name: isProd ? '[name].[hash:4].[ext]' : '[name].[ext]',
               // outputPath: 'assets/', // custom output path,
               useRelativePath: true, // TODO: switch to isProd
             },
@@ -223,6 +240,7 @@ module.exports = {
           // }
         ],
       },
+      // --------------------------- URL-LOADER -------------------------------
       // {
       //   test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
       //   loader: 'url-loader',
